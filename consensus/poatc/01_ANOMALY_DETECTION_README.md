@@ -14,8 +14,7 @@ Hệ thống phát hiện bất thường (Anomaly Detection) được tích h�
 ### 2. Phát hiện Suspicious Patterns
 - **Mục đích**: Phát hiện pattern ký liên tiếp bất thường
 - **Cấu hình**: `SuspiciousThreshold` - số blocks liên tiếp tối đa
-- **Severity**: Low/Me
-
+- **Severity**: Low/Medium/High tùy theo số blocks liên tiếp
 
 ### 3. Phát hiện Frequency Anomalies
 - **Mục đích**: Phát hiện signer xuất hiện quá thường xuyên hoặc quá ít

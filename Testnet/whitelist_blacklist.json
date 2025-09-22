@@ -1,0 +1,28 @@
+{
+  "whitelist": {},
+  "blacklist": {
+    "0x6519b747fc2c4dd4393843855bef77f28875b07c": {
+      "address": "0x6519b747fc2c4dd4393843855bef77f28875b07c",
+      "added_at": "2025-09-22T14:59:19.022057+07:00",
+      "added_by": "0x0000000000000000000000000000000000000000",
+      "reason": "Auto-blacklisted due to low reputation: 0.39",
+      "is_active": true,
+      "expires_at": "2025-09-23T14:59:19.022057+07:00"
+    },
+    "0x89aeae88fe9298755eaa5b9094c5da1e7536a505": {
+      "address": "0x89aeae88fe9298755eaa5b9094c5da1e7536a505",
+      "added_at": "2025-09-22T10:32:51.1131327+07:00",
+      "added_by": "0x0000000000000000000000000000000000000000",
+      "reason": "Auto-blacklisted due to low reputation: 0.10",
+      "is_active": true,
+      "expires_at": "2025-09-23T10:32:51.1131327+07:00"
+    }
+  },
+  "config": {
+    "enable_whitelist": false,
+    "enable_blacklist": false,
+    "whitelist_mode": false,
+    "persistence_path": "./whitelist_blacklist.json"
+  },
+  "last_updated": "2025-09-22T14:59:19.022057+07:00"
+}

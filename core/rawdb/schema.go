@@ -134,6 +134,10 @@ var (
 
 	CliqueSnapshotPrefix = []byte("clique-")
 
+	// Reputation system keys
+	ReputationScoresKey = []byte("reputation-scores") // ReputationScoresKey -> JSON(ReputationScore map)
+	ReputationEventsKey = []byte("reputation-events") // ReputationEventsKey -> JSON(ReputationEvent slice)
+
 	BestUpdateKey         = []byte("update-")    // bigEndian64(syncPeriod) -> RLP(types.LightClientUpdate)  (nextCommittee only referenced by root hash)
 	FixedCommitteeRootKey = []byte("fixedRoot-") // bigEndian64(syncPeriod) -> committee root hash
 	SyncCommitteeKey      = []byte("committee-") // bigEndian64(syncPeriod) -> serialized committee

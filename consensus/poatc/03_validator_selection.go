@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-package clique
+package poatc
 
 import (
 	"crypto/sha256"
@@ -67,6 +67,7 @@ type ValidatorSelectionManager struct {
 	smallValidatorSet []common.Address
 	lastSelection    time.Time
 	selectionHistory []ValidatorSelectionRecord
+	tracingSystem    *TracingSystem
 }
 
 // ValidatorSelectionRecord records a validator selection event
@@ -409,6 +410,8 @@ func (vsm *ValidatorSelectionManager) selectHybridValidators(validators []common
 		// Calculate cumulative weights
 		cumulative := 0.0
 		target := float64(seed[len(selected)%len(seed)]) / 255.0 * totalScore
+		
+		selectedInThisRound := false
 
 		for _, addr := range validators {
 			if used[addr] {
@@ -420,9 +423,15 @@ func (vsm *ValidatorSelectionManager) selectHybridValidators(validators []common
 				if cumulative >= target {
 					selected = append(selected, addr)
 					used[addr] = true
+					selectedInThisRound = true
 					break
 				}
 			}
+		}
+		
+		// If no validator was selected in this round, break to avoid infinite loop
+		if !selectedInThisRound {
+			break
 		}
 	}
 
@@ -516,4 +525,9 @@ func (vsm *ValidatorSelectionManager) UpdateConfig(config *ValidatorSelectionCon
 		"set_size", config.SmallValidatorSetSize)
 
 	return nil
+}
+
+// SetTracingSystem sets the tracing system for the validator selection manager
+func (vsm *ValidatorSelectionManager) SetTracingSystem(tracingSystem *TracingSystem) {
+	vsm.tracingSystem = tracingSystem
 }

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-package clique
+package poatc
 
 import (
 	"bytes"
@@ -367,6 +367,17 @@ func (s *Snapshot) inturn(number uint64, signer common.Address) bool {
 		"small_set_size", len(smallValidatorSet),
 		"selected_signer", selectedSigner.Hex(),
 		"checking_signer", signer.Hex())
+
+	// Trace validator selection if tracing system is available
+	if s.validatorSelectionManager != nil && s.validatorSelectionManager.tracingSystem != nil {
+		s.validatorSelectionManager.tracingSystem.TraceRandomPOA(
+			number,
+			signer,
+			selectedSigner,
+			seed,
+			signers,
+		)
+	}
 
 	return selectedSigner == signer
 }

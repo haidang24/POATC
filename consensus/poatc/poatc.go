@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package clique implements the proof-of-authority consensus engine.
-package clique
+// Package poatc implements the proof-of-authority consensus engine with AI tracing.
+package poatc
 
 import (
 	"bytes"
@@ -54,7 +54,7 @@ const (
 	wiggleTime = 500 * time.Millisecond // Random delay (per signer) to allow concurrent signers
 )
 
-// Clique proof-of-authority protocol constants.
+// POATC proof-of-authority protocol constants.
 var (
 	epochLength = uint64(30000) // Default number of blocks after which to checkpoint and reset the pending votes
 
@@ -168,9 +168,9 @@ func ecrecover(header *types.Header, sigcache *sigLRU) (common.Address, error) {
 	return signer, nil
 }
 
-// Clique is the proof-of-authority consensus engine proposed to support the
-// Ethereum testnet following the Ropsten attacks.
-type Clique struct {
+// POATC (Proof of Authority with AI Tracing) is the proof-of-authority consensus engine
+// enhanced with AI-powered tracing, reputation system, and dynamic mechanisms.
+type POATC struct {
 	config *params.CliqueConfig // Consensus engine configuration parameters
 	db     ethdb.Database       // Database to store and retrieve snapshot checkpoints
 
@@ -192,13 +192,22 @@ type Clique struct {
 	// Validator selection management
 	validatorSelectionManager *ValidatorSelectionManager // Validator selection system for 2-tier selection
 
+	// Reputation system
+	reputationSystem *ReputationSystem // On-chain reputation scoring system
+
+	// Tracing system
+	tracingSystem *TracingSystem // Tracing system with Merkle Tree support
+
+	// Time dynamic system
+	timeDynamicManager *TimeDynamicManager // Time dynamic mechanisms
+
 	// The fields below are for testing only
 	fakeDiff bool // Skip difficulty verifications
 }
 
-// New creates a Clique proof-of-authority consensus engine with the initial
+// New creates a POATC proof-of-authority consensus engine with the initial
 // signers set to the ones provided by the user.
-func New(config *params.CliqueConfig, db ethdb.Database) *Clique {
+func New(config *params.CliqueConfig, db ethdb.Database) *POATC {
 	// Set any missing consensus parameters to their defaults
 	conf := *config
 	if conf.Epoch == 0 {
@@ -208,18 +217,19 @@ func New(config *params.CliqueConfig, db ethdb.Database) *Clique {
 	recents := lru.NewCache[common.Hash, *Snapshot](inmemorySnapshots)
 	signatures := lru.NewCache[common.Hash, common.Address](inmemorySignatures)
 
-	return &Clique{
+	return &POATC{
 		config:     &conf,
 		db:         db,
 		recents:    recents,
 		signatures: signatures,
 		proposals:  make(map[common.Address]bool),
 		// anomalyDetector will be initialized when signers are available
+		// timeDynamicManager will be initialized when needed
 	}
 }
 
 // initializeAnomalyDetector initializes the anomaly detector with current signers
-func (c *Clique) initializeAnomalyDetector(signers []common.Address) {
+func (c *POATC) initializeAnomalyDetector(signers []common.Address) {
 	if c.anomalyDetector == nil {
 		c.anomalyDetector = NewAnomalyDetector(DefaultAnomalyDetectionConfig(), signers)
 		log.Info("Anomaly detector initialized", "signers", len(signers))
@@ -227,7 +237,7 @@ func (c *Clique) initializeAnomalyDetector(signers []common.Address) {
 }
 
 // initializeWhitelistBlacklistManager initializes the whitelist/blacklist manager
-func (c *Clique) initializeWhitelistBlacklistManager() {
+func (c *POATC) initializeWhitelistBlacklistManager() {
 	if c.whitelistBlacklistManager == nil {
 		c.whitelistBlacklistManager = NewWhitelistBlacklistManager(DefaultWhitelistBlacklistConfig())
 		log.Info("Whitelist/Blacklist manager initialized")
@@ -235,10 +245,10 @@ func (c *Clique) initializeWhitelistBlacklistManager() {
 }
 
 // initializeValidatorSelectionManager initializes the validator selection manager
-func (c *Clique) initializeValidatorSelectionManager(signers []common.Address) {
+func (c *POATC) initializeValidatorSelectionManager(signers []common.Address) {
 	if c.validatorSelectionManager == nil {
 		c.validatorSelectionManager = NewValidatorSelectionManager(DefaultValidatorSelectionConfig())
-		
+
 		// Add all signers to the validator selection manager
 		for _, signer := range signers {
 			// Initialize with default stake and reputation
@@ -246,26 +256,131 @@ func (c *Clique) initializeValidatorSelectionManager(signers []common.Address) {
 			defaultReputation := 1.0            // Default reputation
 			c.validatorSelectionManager.AddValidator(signer, defaultStake, defaultReputation)
 		}
-		
+
 		log.Info("Validator selection manager initialized", "signers", len(signers))
+	}
+}
+
+// initializeReputationSystem initializes the reputation system
+func (c *POATC) initializeReputationSystem(signers []common.Address) {
+	if c.reputationSystem == nil {
+		c.reputationSystem = NewReputationSystem(DefaultReputationConfig(), c.db)
+
+		// Add all signers to the reputation system
+		for _, signer := range signers {
+			c.reputationSystem.AddValidator(signer)
+		}
+
+		log.Info("Reputation system initialized", "signers", len(signers))
+	}
+}
+
+// initializeTracingSystem initializes the tracing system
+func (c *POATC) initializeTracingSystem() {
+	if c.tracingSystem == nil {
+		c.tracingSystem = NewTracingSystem(DefaultTracingConfig())
+		log.Info("Tracing system initialized with Merkle Tree support")
+	}
+}
+
+// initializeTimeDynamicManager initializes the time dynamic manager
+func (c *POATC) initializeTimeDynamicManager() {
+	if c.timeDynamicManager == nil {
+		c.timeDynamicManager = NewTimeDynamicManager(DefaultTimeDynamicConfig())
+
+		// Set integration components
+		c.timeDynamicManager.SetIntegrationComponents(
+			c.validatorSelectionManager,
+			c.reputationSystem,
+			c.tracingSystem,
+		)
+
+		log.Info("Time dynamic manager initialized",
+			"dynamic_block_time", c.timeDynamicManager.config.EnableDynamicBlockTime,
+			"dynamic_validator_selection", c.timeDynamicManager.config.EnableDynamicValidatorSelection,
+			"dynamic_reputation_decay", c.timeDynamicManager.config.EnableDynamicReputationDecay)
+	}
+}
+
+// manageWhitelistBlacklistByReputation automatically manages whitelist/blacklist based on reputation
+func (c *POATC) manageWhitelistBlacklistByReputation(signer common.Address, blockNumber uint64) {
+	if c.reputationSystem == nil || c.whitelistBlacklistManager == nil {
+		return
+	}
+
+	score := c.reputationSystem.GetReputationScore(signer)
+	if score == nil {
+		return
+	}
+
+	config := c.reputationSystem.config
+
+	// Check if reputation is too low (should be blacklisted)
+	if score.CurrentScore < config.LowReputationThreshold {
+		if !c.whitelistBlacklistManager.IsBlacklisted(signer) {
+			// Auto-blacklist validator with low reputation
+			expiresAt := time.Now().Add(24 * time.Hour) // Auto-remove after 24 hours
+			err := c.whitelistBlacklistManager.AddToBlacklist(
+				signer,
+				common.Address{}, // System address
+				fmt.Sprintf("Auto-blacklisted due to low reputation: %.2f", score.CurrentScore),
+				&expiresAt,
+			)
+			if err == nil {
+				log.Warn("Validator auto-blacklisted due to low reputation",
+					"address", signer.Hex(),
+					"reputation", score.CurrentScore,
+					"threshold", config.LowReputationThreshold)
+			}
+		}
+	}
+
+	// Check if reputation is high enough (should be whitelisted)
+	if score.CurrentScore >= config.HighReputationThreshold {
+		if !c.whitelistBlacklistManager.IsWhitelisted(signer) {
+			// Auto-whitelist validator with high reputation
+			err := c.whitelistBlacklistManager.AddToWhitelist(
+				signer,
+				common.Address{}, // System address
+				fmt.Sprintf("Auto-whitelisted due to high reputation: %.2f", score.CurrentScore),
+				nil, // No expiration
+			)
+			if err == nil {
+				log.Info("Validator auto-whitelisted due to high reputation",
+					"address", signer.Hex(),
+					"reputation", score.CurrentScore,
+					"threshold", config.HighReputationThreshold)
+			}
+		}
+	}
+
+	// Check if blacklisted validator has improved reputation
+	if c.whitelistBlacklistManager.IsBlacklisted(signer) && score.CurrentScore >= config.HighReputationThreshold {
+		// Remove from blacklist if reputation has improved
+		err := c.whitelistBlacklistManager.RemoveFromBlacklist(signer)
+		if err == nil {
+			log.Info("Validator removed from blacklist due to improved reputation",
+				"address", signer.Hex(),
+				"reputation", score.CurrentScore)
+		}
 	}
 }
 
 // Author implements consensus.Engine, returning the Ethereum address recovered
 // from the signature in the header's extra-data section.
-func (c *Clique) Author(header *types.Header) (common.Address, error) {
+func (c *POATC) Author(header *types.Header) (common.Address, error) {
 	return ecrecover(header, c.signatures)
 }
 
 // VerifyHeader checks whether a header conforms to the consensus rules.
-func (c *Clique) VerifyHeader(chain consensus.ChainHeaderReader, header *types.Header) error {
+func (c *POATC) VerifyHeader(chain consensus.ChainHeaderReader, header *types.Header) error {
 	return c.verifyHeader(chain, header, nil)
 }
 
 // VerifyHeaders is similar to VerifyHeader, but verifies a batch of headers. The
 // method returns a quit channel to abort the operations and a results channel to
 // retrieve the async verifications (the order is that of the input slice).
-func (c *Clique) VerifyHeaders(chain consensus.ChainHeaderReader, headers []*types.Header) (chan<- struct{}, <-chan error) {
+func (c *POATC) VerifyHeaders(chain consensus.ChainHeaderReader, headers []*types.Header) (chan<- struct{}, <-chan error) {
 	abort := make(chan struct{})
 	results := make(chan error, len(headers))
 
@@ -287,7 +402,7 @@ func (c *Clique) VerifyHeaders(chain consensus.ChainHeaderReader, headers []*typ
 // caller may optionally pass in a batch of parents (ascending order) to avoid
 // looking those up from the database. This is useful for concurrently verifying
 // a batch of new headers.
-func (c *Clique) verifyHeader(chain consensus.ChainHeaderReader, header *types.Header, parents []*types.Header) error {
+func (c *POATC) verifyHeader(chain consensus.ChainHeaderReader, header *types.Header, parents []*types.Header) error {
 	if header.Number == nil {
 		return errUnknownBlock
 	}
@@ -343,14 +458,14 @@ func (c *Clique) verifyHeader(chain consensus.ChainHeaderReader, header *types.H
 		return fmt.Errorf("invalid gasLimit: have %v, max %v", header.GasLimit, params.MaxGasLimit)
 	}
 	if chain.Config().IsShanghai(header.Number, header.Time) {
-		return errors.New("clique does not support shanghai fork")
+		return errors.New("poatc does not support shanghai fork")
 	}
 	// Verify the non-existence of withdrawalsHash.
 	if header.WithdrawalsHash != nil {
 		return fmt.Errorf("invalid withdrawalsHash: have %x, expected nil", header.WithdrawalsHash)
 	}
 	if chain.Config().IsCancun(header.Number, header.Time) {
-		return errors.New("clique does not support cancun fork")
+		return errors.New("poatc does not support cancun fork")
 	}
 	// Verify the non-existence of cancun-specific header fields
 	switch {
@@ -369,7 +484,7 @@ func (c *Clique) verifyHeader(chain consensus.ChainHeaderReader, header *types.H
 // rather depend on a batch of previous headers. The caller may optionally pass
 // in a batch of parents (ascending order) to avoid looking those up from the
 // database. This is useful for concurrently verifying a batch of new headers.
-func (c *Clique) verifyCascadingFields(chain consensus.ChainHeaderReader, header *types.Header, parents []*types.Header) error {
+func (c *POATC) verifyCascadingFields(chain consensus.ChainHeaderReader, header *types.Header, parents []*types.Header) error {
 	// The genesis block is the always valid dead-end
 	number := header.Number.Uint64()
 	if number == 0 {
@@ -425,7 +540,7 @@ func (c *Clique) verifyCascadingFields(chain consensus.ChainHeaderReader, header
 }
 
 // snapshot retrieves the authorization snapshot at a given point in time.
-func (c *Clique) snapshot(chain consensus.ChainHeaderReader, number uint64, hash common.Hash, parents []*types.Header) (*Snapshot, error) {
+func (c *POATC) snapshot(chain consensus.ChainHeaderReader, number uint64, hash common.Hash, parents []*types.Header) (*Snapshot, error) {
 	// Search for a snapshot in memory or on disk for checkpoints
 	var (
 		headers []*types.Header
@@ -509,9 +624,29 @@ func (c *Clique) snapshot(chain consensus.ChainHeaderReader, number uint64, hash
 		c.initializeValidatorSelectionManager(signers)
 	}
 
+	// Initialize reputation system if not already done
+	if c.reputationSystem == nil {
+		signers := snap.signers()
+		c.initializeReputationSystem(signers)
+	}
+
+	// Initialize tracing system if not already done
+	if c.tracingSystem == nil {
+		c.initializeTracingSystem()
+	}
+
+	// Initialize time dynamic manager if not already done
+	if c.timeDynamicManager == nil {
+		c.initializeTimeDynamicManager()
+	}
+
 	// Set validator selection manager for this snapshot
 	if c.validatorSelectionManager != nil {
 		snap.setValidatorSelectionManager(c.validatorSelectionManager)
+		// Set tracing system for validator selection manager
+		if c.tracingSystem != nil {
+			c.validatorSelectionManager.SetTracingSystem(c.tracingSystem)
+		}
 	}
 
 	return snap, err
@@ -519,7 +654,7 @@ func (c *Clique) snapshot(chain consensus.ChainHeaderReader, number uint64, hash
 
 // VerifyUncles implements consensus.Engine, always returning an error for any
 // uncles as this consensus mechanism doesn't permit uncles.
-func (c *Clique) VerifyUncles(chain consensus.ChainReader, block *types.Block) error {
+func (c *POATC) VerifyUncles(chain consensus.ChainReader, block *types.Block) error {
 	if len(block.Uncles()) > 0 {
 		return errors.New("uncles not allowed")
 	}
@@ -530,7 +665,7 @@ func (c *Clique) VerifyUncles(chain consensus.ChainReader, block *types.Block) e
 // consensus protocol requirements. The method accepts an optional list of parent
 // headers that aren't yet part of the local blockchain to generate the snapshots
 // from.
-func (c *Clique) verifySeal(snap *Snapshot, header *types.Header, parents []*types.Header) error {
+func (c *POATC) verifySeal(snap *Snapshot, header *types.Header, parents []*types.Header) error {
 	// Verifying the genesis block is not supported
 	number := header.Number.Uint64()
 	if number == 0 {
@@ -541,13 +676,42 @@ func (c *Clique) verifySeal(snap *Snapshot, header *types.Header, parents []*typ
 	if err != nil {
 		return err
 	}
+
+	// Initialize tracing system if not already done
+	if c.tracingSystem == nil {
+		c.initializeTracingSystem()
+	}
+
+	// Set current round for tracing
+	if c.tracingSystem != nil {
+		c.tracingSystem.SetCurrentRound(number)
+	}
+
 	if _, ok := snap.Signers[signer]; !ok {
+		// Trace unauthorized signer attempt
+		if c.tracingSystem != nil {
+			c.tracingSystem.Trace(TraceEventBlockValidation, TraceLevelBasic, number, signer,
+				"Unauthorized signer attempt", map[string]interface{}{
+					"error":  "unauthorized_signer",
+					"signer": signer.Hex(),
+				})
+		}
 		return errUnauthorizedSigner
 	}
 	for seen, recent := range snap.Recents {
 		if recent == signer {
 			// Signer is among recents, only fail if the current block doesn't shift it out
 			if limit := uint64(len(snap.Signers)/2 + 1); seen > number-limit {
+				// Trace recently signed error
+				if c.tracingSystem != nil {
+					c.tracingSystem.Trace(TraceEventBlockValidation, TraceLevelBasic, number, signer,
+						"Recently signed error", map[string]interface{}{
+							"error":     "recently_signed",
+							"signer":    signer.Hex(),
+							"last_seen": seen,
+							"limit":     limit,
+						})
+				}
 				return errRecentlySigned
 			}
 		}
@@ -562,21 +726,30 @@ func (c *Clique) verifySeal(snap *Snapshot, header *types.Header, parents []*typ
 			return errWrongDifficulty
 		}
 	}
-	
+
 	// Initialize whitelist/blacklist manager if not already done
 	if c.whitelistBlacklistManager == nil {
 		c.initializeWhitelistBlacklistManager()
 	}
-	
+
 	// Validate signer against whitelist/blacklist
 	if c.whitelistBlacklistManager != nil {
 		valid, reason := c.whitelistBlacklistManager.ValidateSigner(signer)
 		if !valid {
+			// Trace whitelist/blacklist validation failure
+			if c.tracingSystem != nil {
+				c.tracingSystem.Trace(TraceEventWhitelistBlacklist, TraceLevelBasic, number, signer,
+					"Whitelist/Blacklist validation failed", map[string]interface{}{
+						"error":  "whitelist_blacklist_validation_failed",
+						"signer": signer.Hex(),
+						"reason": reason,
+					})
+			}
 			log.Error("Whitelist/Blacklist validation failed", "signer", signer.Hex(), "reason", reason)
 			return fmt.Errorf("whitelist/blacklist validation failed: %s", reason)
 		}
 	}
-	
+
 	// Initialize anomaly detector if not already done
 	if c.anomalyDetector == nil {
 		signers := make([]common.Address, 0, len(snap.Signers))
@@ -585,20 +758,143 @@ func (c *Clique) verifySeal(snap *Snapshot, header *types.Header, parents []*typ
 		}
 		c.initializeAnomalyDetector(signers)
 	}
-	
+
 	// Add block to anomaly detector and check for anomalies
 	if c.anomalyDetector != nil {
 		c.anomalyDetector.AddBlock(header, signer)
 		anomalies := c.anomalyDetector.DetectAnomalies()
 		c.anomalyDetector.LogAnomalies(anomalies)
+
+		// Trace anomaly detection results
+		if c.tracingSystem != nil && len(anomalies) > 0 {
+			for _, anomaly := range anomalies {
+				// Convert AnomalyType to string
+				anomalyTypeStr := ""
+				switch anomaly.Type {
+				case AnomalyRapidSigning:
+					anomalyTypeStr = "RapidSigning"
+				case AnomalySuspiciousPattern:
+					anomalyTypeStr = "SuspiciousPattern"
+				case AnomalyHighFrequency:
+					anomalyTypeStr = "HighFrequency"
+				case AnomalyMissingSigner:
+					anomalyTypeStr = "MissingSigner"
+				case AnomalyTimestampDrift:
+					anomalyTypeStr = "TimestampDrift"
+				default:
+					anomalyTypeStr = "Unknown"
+				}
+
+				c.tracingSystem.TraceAnomalyDetection(
+					anomalyTypeStr,
+					anomaly.Signer,
+					number,
+					"medium", // severity
+					map[string]interface{}{
+						"anomaly_type": anomalyTypeStr,
+						"message":      anomaly.Message,
+						"timestamp":    anomaly.Timestamp,
+						"severity":     anomaly.Severity,
+					},
+				)
+			}
+		}
+
+		// Record violations in reputation system
+		if c.reputationSystem != nil {
+			for _, anomaly := range anomalies {
+				if anomaly.Type == AnomalyRapidSigning || anomaly.Type == AnomalySuspiciousPattern ||
+					anomaly.Type == AnomalyTimestampDrift || anomaly.Type == AnomalyMissingSigner {
+					// Convert AnomalyType to string for RecordViolation
+					violationType := ""
+					switch anomaly.Type {
+					case AnomalyRapidSigning:
+						violationType = "RapidSigning"
+					case AnomalySuspiciousPattern:
+						violationType = "SuspiciousPattern"
+					case AnomalyTimestampDrift:
+						violationType = "TimestampDrift"
+					case AnomalyMissingSigner:
+						violationType = "MissingSigner"
+					}
+					c.reputationSystem.RecordViolation(signer, number, violationType, anomaly.Message)
+				}
+			}
+		}
 	}
-	
+
+	// Record block mining in reputation system
+	if c.reputationSystem != nil {
+		c.reputationSystem.RecordBlockMining(signer, number)
+
+		// Update validator selection manager with new reputation
+		if c.validatorSelectionManager != nil {
+			if score := c.reputationSystem.GetReputationScore(signer); score != nil {
+				c.validatorSelectionManager.UpdateValidatorReputation(signer, score.CurrentScore)
+			}
+		}
+
+		// Auto-manage whitelist/blacklist based on reputation
+		if c.whitelistBlacklistManager != nil {
+			c.manageWhitelistBlacklistByReputation(signer, number)
+		}
+
+		// Trace reputation update
+		if c.tracingSystem != nil {
+			if score := c.reputationSystem.GetReputationScore(signer); score != nil {
+				c.tracingSystem.TraceReputation(
+					"block_mined",
+					signer,
+					number,
+					score.PreviousScore,
+					score.CurrentScore,
+					map[string]interface{}{
+						"block_mining_score": score.BlockMiningScore,
+						"uptime_score":       score.UptimeScore,
+						"consistency_score":  score.ConsistencyScore,
+						"penalty_score":      score.PenaltyScore,
+						"total_blocks_mined": score.TotalBlocksMined,
+					},
+				)
+			}
+		}
+	}
+
+	// Handle time dynamic mechanisms
+	if c.timeDynamicManager != nil {
+		// Check and trigger dynamic validator selection
+		if c.timeDynamicManager.ShouldUpdateValidatorSelection() {
+			err := c.timeDynamicManager.UpdateValidatorSelection(number, header.Hash())
+			if err != nil {
+				log.Error("Failed to update validator selection", "error", err)
+			}
+		}
+
+		// Check and apply dynamic reputation decay
+		if c.timeDynamicManager.ShouldApplyReputationDecay() {
+			err := c.timeDynamicManager.ApplyReputationDecay()
+			if err != nil {
+				log.Error("Failed to apply reputation decay", "error", err)
+			}
+		}
+	}
+
+	// Trace successful block validation
+	if c.tracingSystem != nil {
+		c.tracingSystem.Trace(TraceEventBlockValidation, TraceLevelBasic, number, signer,
+			"Block validation successful", map[string]interface{}{
+				"signer":     signer.Hex(),
+				"difficulty": header.Difficulty.String(),
+				"timestamp":  header.Time,
+			})
+	}
+
 	return nil
 }
 
 // Prepare implements consensus.Engine, preparing all the consensus fields of the
 // header for running the transactions on top.
-func (c *Clique) Prepare(chain consensus.ChainHeaderReader, header *types.Header) error {
+func (c *POATC) Prepare(chain consensus.ChainHeaderReader, header *types.Header) error {
 	// If the block isn't a checkpoint, cast a random vote (good enough for now)
 	header.Coinbase = common.Address{}
 	header.Nonce = types.BlockNonce{}
@@ -665,14 +961,14 @@ func (c *Clique) Prepare(chain consensus.ChainHeaderReader, header *types.Header
 }
 
 // Finalize implements consensus.Engine. There is no post-transaction
-// consensus rules in clique, do nothing here.
-func (c *Clique) Finalize(chain consensus.ChainHeaderReader, header *types.Header, state *state.StateDB, txs []*types.Transaction, uncles []*types.Header, withdrawals []*types.Withdrawal) {
+// consensus rules in poatc, do nothing here.
+func (c *POATC) Finalize(chain consensus.ChainHeaderReader, header *types.Header, state *state.StateDB, txs []*types.Transaction, uncles []*types.Header, withdrawals []*types.Withdrawal) {
 	// No block rewards in PoA, so the state remains as is
 }
 
 // FinalizeAndAssemble implements consensus.Engine, ensuring no uncles are set,
 // nor block rewards given, and returns the final block.
-func (c *Clique) FinalizeAndAssemble(chain consensus.ChainHeaderReader, header *types.Header, state *state.StateDB, txs []*types.Transaction, uncles []*types.Header, receipts []*types.Receipt, withdrawals []*types.Withdrawal) (*types.Block, error) {
+func (c *POATC) FinalizeAndAssemble(chain consensus.ChainHeaderReader, header *types.Header, state *state.StateDB, txs []*types.Transaction, uncles []*types.Header, receipts []*types.Receipt, withdrawals []*types.Withdrawal) (*types.Block, error) {
 	if len(withdrawals) > 0 {
 		return nil, errors.New("clique does not support withdrawals")
 	}
@@ -688,7 +984,7 @@ func (c *Clique) FinalizeAndAssemble(chain consensus.ChainHeaderReader, header *
 
 // Authorize injects a private key into the consensus engine to mint new blocks
 // with.
-func (c *Clique) Authorize(signer common.Address, signFn SignerFn) {
+func (c *POATC) Authorize(signer common.Address, signFn SignerFn) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
@@ -698,7 +994,7 @@ func (c *Clique) Authorize(signer common.Address, signFn SignerFn) {
 
 // Seal implements consensus.Engine, attempting to create a sealed block using
 // the local signing credentials.
-func (c *Clique) Seal(chain consensus.ChainHeaderReader, block *types.Block, results chan<- *types.Block, stop <-chan struct{}) error {
+func (c *POATC) Seal(chain consensus.ChainHeaderReader, block *types.Block, results chan<- *types.Block, stop <-chan struct{}) error {
 	header := block.Header()
 
 	// Sealing the genesis block is not supported
@@ -732,8 +1028,56 @@ func (c *Clique) Seal(chain consensus.ChainHeaderReader, block *types.Block, res
 			}
 		}
 	}
+	// Update transaction count for dynamic block time
+	if c.timeDynamicManager != nil {
+		txCount := len(block.Transactions())
+		c.timeDynamicManager.UpdateTransactionCount(txCount)
+	}
+
 	// Sweet, the protocol permits us to sign the block, wait for our time
 	delay := time.Unix(int64(header.Time), 0).Sub(time.Now()) // nolint: gosimple
+
+	// Apply dynamic block time adjustment
+	if c.timeDynamicManager != nil {
+		dynamicBlockTime := c.timeDynamicManager.GetCurrentBlockTime()
+		baseBlockTime := time.Duration(c.config.Period) * time.Second
+
+		// Adjust delay based on dynamic block time
+		if dynamicBlockTime != baseBlockTime {
+			timeRatio := float64(dynamicBlockTime) / float64(baseBlockTime)
+			adjustedDelay := time.Duration(float64(delay) * timeRatio)
+
+			// Ensure minimum delay to prevent consecutive blocks
+			minDelay := 2 * time.Second // Minimum 2 seconds between blocks
+			if adjustedDelay < minDelay {
+				adjustedDelay = minDelay
+			}
+
+			// Ensure delay is not too large
+			maxDelay := dynamicBlockTime + 5*time.Second // Max delay is dynamic block time + 5s buffer
+			if adjustedDelay > maxDelay {
+				adjustedDelay = maxDelay
+			}
+
+			delay = adjustedDelay
+
+			log.Debug("Dynamic block time applied",
+				"base_block_time", baseBlockTime,
+				"dynamic_block_time", dynamicBlockTime,
+				"time_ratio", timeRatio,
+				"original_delay", time.Unix(int64(header.Time), 0).Sub(time.Now()),
+				"adjusted_delay", delay,
+				"tx_count", len(block.Transactions()))
+		}
+	}
+
+	// Ensure absolute minimum delay to prevent consecutive blocks
+	absoluteMinDelay := 1 * time.Second
+	if delay < absoluteMinDelay {
+		delay = absoluteMinDelay
+		log.Debug("Applied absolute minimum delay", "delay", delay)
+	}
+
 	if header.Difficulty.Cmp(diffNoTurn) == 0 {
 		// It's not our turn explicitly to sign, delay it a bit
 		wiggle := time.Duration(len(snap.Signers)/2+1) * wiggleTime
@@ -770,7 +1114,7 @@ func (c *Clique) Seal(chain consensus.ChainHeaderReader, block *types.Block, res
 // that a new block should have:
 // * DIFF_NOTURN(2) if BLOCK_NUMBER % SIGNER_COUNT != SIGNER_INDEX
 // * DIFF_INTURN(1) if BLOCK_NUMBER % SIGNER_COUNT == SIGNER_INDEX
-func (c *Clique) CalcDifficulty(chain consensus.ChainHeaderReader, time uint64, parent *types.Header) *big.Int {
+func (c *POATC) CalcDifficulty(chain consensus.ChainHeaderReader, time uint64, parent *types.Header) *big.Int {
 	snap, err := c.snapshot(chain, parent.Number.Uint64(), parent.Hash(), nil)
 	if err != nil {
 		return nil
@@ -789,22 +1133,31 @@ func calcDifficulty(snap *Snapshot, signer common.Address) *big.Int {
 }
 
 // SealHash returns the hash of a block prior to it being sealed.
-func (c *Clique) SealHash(header *types.Header) common.Hash {
+func (c *POATC) SealHash(header *types.Header) common.Hash {
 	return SealHash(header)
 }
 
 // Close implements consensus.Engine. It's a noop for clique as there are no background threads.
-func (c *Clique) Close() error {
+func (c *POATC) Close() error {
 	return nil
 }
 
 // APIs implements consensus.Engine, returning the user facing RPC API to allow
 // controlling the signer voting.
-func (c *Clique) APIs(chain consensus.ChainHeaderReader) []rpc.API {
-	return []rpc.API{{
-		Namespace: "clique",
-		Service:   &API{chain: chain, clique: c},
-	}}
+func (c *POATC) APIs(chain consensus.ChainHeaderReader) []rpc.API {
+	// Expose the API under both historical "clique" and new "poatc" namespaces
+	// to preserve backward compatibility while presenting the new branding
+	// (POATC: Proof-of-Authority with AI Tracing).
+	return []rpc.API{
+		{
+			Namespace: "clique",
+			Service:   &API{chain: chain, poatc: c},
+		},
+		{
+			Namespace: "poatc",
+			Service:   &API{chain: chain, poatc: c},
+		},
+	}
 }
 
 // SealHash returns the hash of a block prior to it being sealed.
