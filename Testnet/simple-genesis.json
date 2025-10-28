@@ -1,0 +1,47 @@
+{
+  "config": {
+    "chainId": 1337,
+    "homesteadBlock": 0,
+    "eip150Block": 0,
+    "eip155Block": 0,
+    "eip158Block": 0,
+    "byzantiumBlock": 0,
+    "constantinopleBlock": 0,
+    "petersburgBlock": 0,
+    "istanbulBlock": 0,
+    "berlinBlock": 0,
+    "londonBlock": 0,
+    "arrowGlacierBlock": 0,
+    "grayGlacierBlock": 0,
+    "shanghaiTime": null,
+    "cancunTime": null,
+    "clique": {
+      "period": 5,
+      "epoch": 30000
+    },
+    "poatc": {
+      "enable_anomaly_detection": false,
+      "enable_whitelist_blacklist": false,
+      "enable_validator_selection": false,
+      "enable_reputation_system": false,
+      "enable_tracing_system": false,
+      "enable_time_dynamic": false,
+      "anomaly_detection_config": {
+        "max_blocks_per_signer": 10,
+        "consecutive_block_threshold": 10,
+        "timestamp_drift_threshold": 300
+      }
+    }
+  },
+  "difficulty": "0x1",
+  "gasLimit": "0x1C9C380",
+  "alloc": {
+    "0x191eb1dDF4ddB7944C17875C43b028a66dfc2Dec": {
+      "balance": "0x200000000000000000000000000000000000000000000000000000000000000"
+    },
+    "0x3120d002f0d1c29f9f1bbb829099a4c7e194a0e1": {
+      "balance": "0x200000000000000000000000000000000000000000000000000000000000000"
+    }
+  },
+  "extraData": "0x0000000000000000000000000000000000000000000000000000000000000000191eb1dDF4ddB7944C17875C43b028a66dfc2Dec3120d002f0d1c29f9f1bbb829099a4c7e194a0e10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+}

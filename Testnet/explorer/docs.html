@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>POATC Documentation - Blockchain Layer 1 Consensus</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      padding-top: 80px;
+    }
+    
+    .docs-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+    
+    .docs-header {
+      text-align: center;
+      padding: 80px 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 24px;
+      color: white;
+      margin-bottom: 40px;
+      box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .docs-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    
+    .docs-header h1 {
+      font-size: 56px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .docs-header p {
+      font-size: 22px;
+      opacity: 0.95;
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .docs-header .version-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 16px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .docs-nav {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 40px;
+      position: sticky;
+      top: 80px;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+    
+    .docs-nav h3 {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    
+    .docs-nav-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      list-style: none;
+      padding: 0;
+    }
+    
+    .docs-nav-list a {
+      display: block;
+      padding: 8px 16px;
+      background: var(--bg-dark);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    
+    .docs-nav-list a:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+    }
+    
+    .docs-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow);
+    }
+    
+    .docs-section h2 {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+    }
+    
+    .docs-section h3 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 32px;
+      margin-bottom: 16px;
+    }
+    
+    .docs-section h4 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    
+    .docs-section p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+    
+    .docs-section ul, .docs-section ol {
+      margin-bottom: 20px;
+      padding-left: 24px;
+    }
+    
+    .docs-section li {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 32px 0;
+    }
+    
+    .feature-box {
+      background: var(--bg-dark);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: var(--transition);
+    }
+    
+    .feature-box:hover {
+      border-color: var(--primary);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .feature-box h4 {
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .feature-icon {
+      font-size: 32px;
+    }
+    
+    .code-block {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+    
+    .code-block pre {
+      margin: 0;
+      font-family: 'SF Mono', Consolas, monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-primary);
+    }
+    
+    .code-block code {
+      font-family: 'SF Mono', Consolas, monospace;
+    }
+    
+    .info-box {
+      background: rgba(33, 150, 243, 0.1);
+      border-left: 4px solid var(--info);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 24px 0;
+    }
+    
+    .warning-box {
+      background: rgba(255, 152, 0, 0.1);
+      border-left: 4px solid var(--warning);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 24px 0;
+    }
+    
+    .success-box {
+      background: rgba(76, 175, 80, 0.1);
+      border-left: 4px solid var(--success);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 24px 0;
+    }
+    
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 24px 0;
+    }
+    
+    .docs-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    
+    .docs-table th {
+      background: var(--bg-dark);
+      padding: 16px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-primary);
+      border-bottom: 2px solid var(--border);
+    }
+    
+    .docs-table td {
+      padding: 16px;
+      border-bottom: 1px solid var(--border-light);
+      color: var(--text-secondary);
+    }
+    
+    .docs-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .back-to-explorer {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: var(--transition);
+      margin-bottom: 24px;
+    }
+    
+    .back-to-explorer:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .diagram {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      margin: 32px 0;
+      text-align: center;
+    }
+    
+    .architecture-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 24px 0;
+    }
+    
+    .flow-box {
+      background: var(--bg-secondary);
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      padding: 20px;
+      min-width: 150px;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+    }
+    
+    .flow-arrow {
+      font-size: 32px;
+      color: var(--primary);
+    }
+    
+    /* Beautiful Footer */
+    .docs-footer {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: white;
+      padding: 60px 40px 40px;
+      margin-top: 80px;
+      border-top: 4px solid var(--primary);
+    }
+    
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    
+    .footer-section h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: white;
+    }
+    
+    .footer-section ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .footer-section li {
+      margin-bottom: 12px;
+    }
+    
+    .footer-section a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      transition: all 0.2s;
+      font-size: 14px;
+    }
+    
+    .footer-section a:hover {
+      color: white;
+      padding-left: 5px;
+    }
+    
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.2);
+      padding-top: 30px;
+      text-align: center;
+    }
+    
+    .footer-bottom p {
+      margin: 8px 0;
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+    }
+    
+    .footer-social {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .social-link {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      transition: all 0.3s;
+    }
+    
+    .social-link:hover {
+      background: var(--primary);
+      transform: translateY(-3px);
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      body {
+        padding-top: 70px;
+      }
+      
+      .docs-header h1 {
+        font-size: 36px;
+      }
+      
+      .docs-header p {
+        font-size: 16px;
+      }
+      
+      .docs-section {
+        padding: 24px;
+      }
+      
+      .docs-section h2 {
+        font-size: 24px;
+      }
+      
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      
+      .docs-nav {
+        position: relative;
+        top: 0;
+      }
+    }
+  </style>
+  <script>
+    // Smooth scroll for anchor links
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            const offsetTop = target.offsetTop - 100;
+            window.scrollTo({
+              top: offsetTop,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+      
+      // Add scroll-to-top button
+      const scrollBtn = document.createElement('button');
+      scrollBtn.innerHTML = '↑';
+      scrollBtn.style.cssText = 'position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; font-size: 24px; cursor: pointer; opacity: 0; transition: opacity 0.3s, transform 0.3s; z-index: 1000; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);';
+      document.body.appendChild(scrollBtn);
+      
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 300) {
+          scrollBtn.style.opacity = '1';
+        } else {
+          scrollBtn.style.opacity = '0';
+        }
+      });
+      
+      scrollBtn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      
+      scrollBtn.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-5px)';
+      });
+      
+      scrollBtn.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+      });
+    });
+  </script>
+</head>
+<body>
+  <!-- Header Navigation -->
+  <header class="navbar" style="position: fixed; top: 0; left: 0; right: 0; z-index: 1000;">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <div class="logo">
+          <div class="logo-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">📚</div>
+          <div class="logo-text">
+            <h1>POATC Documentation</h1>
+            <span class="tagline">Layer 1 Blockchain Technical Docs</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="nav-tools">
+        <a href="index.html" style="display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 14px; transition: all 0.3s; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(102, 126, 234, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.3)'">
+          <span style="font-size: 18px;">🏠</span>
+          <span>Back to Explorer</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="docs-container">
+    
+    <!-- Hero Header -->
+    <div class="docs-header">
+      <h1>🔗 POATC Blockchain</h1>
+      <p>Proof-of-Authority with Advanced Consensus - Layer 1 Documentation</p>
+      <div class="version-badge">Version 1.0 | Hackathon Ready</div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="docs-nav">
+      <h3>Table of Contents</h3>
+      <ul class="docs-nav-list">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#features">Core Features</a></li>
+        <li><a href="#anomaly">Anomaly Detection</a></li>
+        <li><a href="#reputation">Reputation System</a></li>
+        <li><a href="#validator">Validator Selection</a></li>
+        <li><a href="#tracing">Transaction Tracing</a></li>
+        <li><a href="#dynamic">Time Dynamic</a></li>
+        <li><a href="#access">Access Control</a></li>
+        <li><a href="#performance">Performance</a></li>
+        <li><a href="#api">API Reference</a></li>
+      </ul>
+    </div>
+
+    <!-- Overview Section -->
+    <section id="overview" class="docs-section">
+      <h2>🌟 Overview</h2>
+      
+      <p>
+        <strong>POATC (Proof-of-Authority with Advanced Consensus)</strong> là một blockchain Layer 1 được xây dựng trên nền tảng Ethereum (Geth), 
+        kết hợp cơ chế đồng thuận Proof-of-Authority (PoA) với 6 tính năng nâng cao để tạo ra một mạng blockchain an toàn, hiệu quả và có thể mở rộng.
+      </p>
+
+      <div class="success-box">
+        <h4>✨ Key Highlights</h4>
+        <ul>
+          <li><strong>Consensus:</strong> Proof-of-Authority (Clique) + Enhanced Features</li>
+          <li><strong>Performance:</strong> ~10-15 TPS, Block time: 2-15 seconds</li>
+          <li><strong>Security:</strong> Multi-layer validation với Anomaly Detection</li>
+          <li><strong>Scalability:</strong> Dynamic block time và validator selection</li>
+        </ul>
+      </div>
+
+      <h3>🎯 Design Goals</h3>
+      <ul>
+        <li><strong>Security First:</strong> Phát hiện và ngăn chặn hành vi bất thường tự động</li>
+        <li><strong>Fair Participation:</strong> Hệ thống reputation đảm bảo validators hoạt động công bằng</li>
+        <li><strong>Transparency:</strong> Transaction tracing với Merkle proof verification</li>
+        <li><strong>Adaptability:</strong> Time dynamic điều chỉnh theo network load</li>
+        <li><strong>Governance:</strong> Whitelist/Blacklist cho access control</li>
+      </ul>
+
+      <h3>📊 Network Specifications</h3>
+      <div class="table-wrapper">
+        <table class="docs-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Value</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Network ID</td>
+              <td>1337</td>
+              <td>Unique identifier cho POATC network</td>
+            </tr>
+            <tr>
+              <td>Consensus</td>
+              <td>Clique (PoA) + POATC</td>
+              <td>Proof-of-Authority với advanced features</td>
+            </tr>
+            <tr>
+              <td>Block Time</td>
+              <td>2-15 seconds</td>
+              <td>Dynamic, điều chỉnh theo transaction volume</td>
+            </tr>
+            <tr>
+              <td>Gas Limit</td>
+              <td>30,000,000</td>
+              <td>Maximum gas per block</td>
+            </tr>
+            <tr>
+              <td>TPS</td>
+              <td>10-15 tx/s</td>
+              <td>Transactions per second (có thể tối ưu lên 60-100)</td>
+            </tr>
+            <tr>
+              <td>Validators</td>
+              <td>2+ nodes</td>
+              <td>Authorized signers (có thể mở rộng)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture" class="docs-section">
+      <h2>🏗️ System Architecture</h2>
+
+      <p>
+        POATC được xây dựng dựa trên kiến trúc multi-layer với các module độc lập nhưng tích hợp chặt chẽ với nhau.
+      </p>
+
+      <div class="diagram">
+        <h3>Architecture Overview</h3>
+        <div class="architecture-flow">
+          <div class="flow-box">Client Layer<br/>(RPC/HTTP/WS)</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box">Consensus Layer<br/>(Clique + POATC)</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box">Validation Layer<br/>(6 Features)</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box">Storage Layer<br/>(State DB)</div>
+        </div>
+      </div>
+
+      <h3>🔧 Core Components</h3>
+
+      <div class="feature-grid">
+        <div class="feature-box">
+          <h4><span class="feature-icon">⚙️</span> Clique Engine</h4>
+          <p>Base PoA consensus mechanism, quản lý validator authorization và block signing.</p>
+        </div>
+
+        <div class="feature-box">
+          <h4><span class="feature-icon">🛡️</span> POATC Module</h4>
+          <p>Enhanced consensus layer với 6 tính năng nâng cao tích hợp.</p>
+        </div>
+
+        <div class="feature-box">
+          <h4><span class="feature-icon">💾</span> State Database</h4>
+          <p>Pebble/LevelDB lưu trữ blockchain state và transaction data.</p>
+        </div>
+
+        <div class="feature-box">
+          <h4><span class="feature-icon">🔌</span> RPC Interface</h4>
+          <p>HTTP/WebSocket endpoints cho client interaction.</p>
+        </div>
+      </div>
+
+      <h3>📁 Code Structure</h3>
+      <div class="code-block">
+        <pre><code>consensus/
+├── poatc/
+│   ├── poatc.go                    # Main consensus implementation
+│   ├── anomaly_detection.go        # Anomaly Detection System
+│   ├── reputation_system.go        # Reputation Management
+│   ├── validator_selection.go      # Validator Selection Algorithm
+│   ├── tracing_system.go          # Transaction Tracing with Merkle
+│   ├── time_dynamic.go            # Dynamic Block Time Management
+│   └── whitelist_blacklist.go     # Access Control System</code></pre>
+      </div>
+    </section>
+
+    <!-- Core Features Section -->
+    <section id="features" class="docs-section">
+      <h2>🚀 Core Features</h2>
+
+      <p>POATC bao gồm 6 tính năng chính được tích hợp sâu vào cơ chế đồng thuận:</p>
+
+      <div class="feature-grid">
+        <div class="feature-box">
+          <h4><span class="feature-icon">🛡️</span> 1. Anomaly Detection</h4>
+          <p>Phát hiện và cảnh báo hành vi bất thường của validators như:</p>
+          <ul>
+            <li>Consecutive block signing</li>
+            <li>Frequency violations</li>
+            <li>Timestamp drift</li>
+          </ul>
+        </div>
+
+        <div class="feature-box">
+          <h4><span class="feature-icon">⭐</span> 2. Reputation System</h4>
+          <p>Đánh giá và theo dõi uy tín validators dựa trên:</p>
+          <ul>
+            <li>Block mining performance</li>
+            <li>Uptime và consistency</li>
+            <li>Penalties và violations</li>
+          </ul>
+        </div>
+
+        <div class="feature-box">
+          <h4><span class="feature-icon">🎯</span> 3. Validator Selection</h4>
+          <p>Chọn validators thông minh với 3 methods:</p>
+          <ul>
+            <li>Random selection</li>
+            <li>Reputation-based</li>
+            <li>Hybrid (stake + reputation)</li>
+          </ul>
+        </div>
+
+        <div class="feature-box">
+          <h4><span class="feature-icon">🔍</span> 4. Transaction Tracing</h4>
+          <p>Tracking đầy đủ lifecycle của transactions:</p>
+          <ul>
+            <li>Merkle tree cho verification</li>
+            <li>Event logging</li>
+            <li>Cryptographic proofs</li>
+          </ul>
+        </div>
+
+        <div class="feature-box">
+          <h4><span class="feature-icon">⏰</span> 5. Time Dynamic</h4>
+          <p>Điều chỉnh block time tự động:</p>
+          <ul>
+            <li>Based on transaction volume</li>
+            <li>Network congestion</li>
+            <li>Validator performance</li>
+          </ul>
+        </div>
+
+        <div class="feature-box">
+          <h4><span class="feature-icon">🔐</span> 6. Access Control</h4>
+          <p>Quản lý whitelist/blacklist:</p>
+          <ul>
+            <li>Address-based filtering</li>
+            <li>Auto-expiration</li>
+            <li>Persistent storage</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Anomaly Detection Section -->
+    <section id="anomaly" class="docs-section">
+      <h2>🛡️ Anomaly Detection System</h2>
+
+      <p>
+        Hệ thống phát hiện bất thường giám sát hành vi của validators và tự động cảnh báo khi phát hiện vi phạm.
+      </p>
+
+      <h3>📋 Detection Rules</h3>
+
+      <div class="table-wrapper">
+        <table class="docs-table">
+          <thead>
+            <tr>
+              <th>Rule</th>
+              <th>Threshold</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Consecutive Blocks</td>
+              <td>3 blocks</td>
+              <td>Validator không được sign >3 blocks liên tiếp</td>
+            </tr>
+            <tr>
+              <td>Signing Frequency</td>
+              <td>50% (window: 10 blocks)</td>
+              <td>Không được sign quá 50% blocks trong window</td>
+            </tr>
+            <tr>
+              <td>Timestamp Drift</td>
+              <td>±30 seconds</td>
+              <td>Block timestamp không được lệch quá 30s</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>⚙️ Configuration</h3>
+      <div class="code-block">
+        <pre><code>{
+  "anomaly_detection": {
+    "max_blocks_per_signer": 1,           // Max blocks trong period
+    "consecutive_block_threshold": 3,      // Max consecutive blocks
+    "timestamp_drift_threshold": 30,       // Seconds
+    "evaluation_window": 10,               // Blocks to evaluate
+    "alert_threshold": 5                   // Alerts before penalty
+  }
+}</code></pre>
+      </div>
+
+      <h3>🔍 API Usage</h3>
+      <div class="code-block">
+        <pre><code>// Get anomaly statistics
+curl -X POST http://127.0.0.1:8545 \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"poatc_getAnomalyStats","params":[],"id":1}'
+
+// Response
+{
+  "total_anomalies": 42,
+  "consecutive_blocks": 15,
+  "frequency_violations": 18,
+  "timestamp_drifts": 9,
+  "last_anomaly": "2025-10-13T20:30:00Z"
+}</code></pre>
+      </div>
+
+      <div class="warning-box">
+        <h4>⚠️ Important Notes</h4>
+        <ul>
+          <li>Anomalies chỉ ghi log, không tự động reject blocks</li>
+          <li>Penalties được áp dụng cho reputation score</li>
+          <li>Có thể configure thresholds trong genesis file</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Reputation System Section -->
+    <section id="reputation" class="docs-section">
+      <h2>⭐ Reputation System</h2>
+
+      <p>
+        Hệ thống reputation đánh giá validators dựa trên performance metrics và hành vi trong network.
+      </p>
+
+      <h3>📊 Reputation Score Components</h3>
+
+      <div class="feature-grid">
+        <div class="feature-box">
+          <h4>Block Mining (Weight: 0.4)</h4>
+          <p>Điểm dựa trên số blocks đã mine thành công.</p>
+        </div>
+
+        <div class="feature-box">
+          <h4>Uptime (Weight: 0.3)</h4>
+          <p>Thời gian online và khả năng phản hồi.</p>
+        </div>
+
+        <div class="feature-box">
+          <h4>Consistency (Weight: 0.2)</h4>
+          <p>Tính nhất quán trong block production.</p>
+        </div>
+
+        <div class="feature-box">
+          <h4>Penalties (Weight: -0.1)</h4>
+          <p>Trừ điểm cho violations và anomalies.</p>
+        </div>
+      </div>
+
+      <h3>📐 Score Calculation</h3>
+      <div class="code-block">
+        <pre><code>Reputation Score = 
+  (Block Mining × 0.4) + 
+  (Uptime × 0.3) + 
+  (Consistency × 0.2) - 
+  (Penalties × 0.1)
+
+Range: 0.0 (worst) to 1.0 (perfect)</code></pre>
+      </div>
+
+      <h3>🔧 Configuration</h3>
+      <div class="code-block">
+        <pre><code>{
+  "reputation_system": {
+    "initial_reputation": 1.0,           // Starting score
+    "max_reputation": 1.0,               // Maximum possible
+    "min_reputation": 0.0,               // Minimum possible
+    "block_mining_weight": 0.4,          // Component weights
+    "uptime_weight": 0.3,
+    "consistency_weight": 0.2,
+    "penalty_weight": 0.1,
+    "decay_rate": 0.01,                  // Score decay over time
+    "update_interval": 100,              // Blocks between updates
+    "high_reputation_threshold": 0.8,    // High performer
+    "low_reputation_threshold": 0.3      // Warning threshold
+  }
+}</code></pre>
+      </div>
+
+      <h3>🔍 API Usage</h3>
+      <div class="code-block">
+        <pre><code>// Get validator reputation
+curl -X POST http://127.0.0.1:8545 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc":"2.0",
+    "method":"poatc_getReputation",
+    "params":["0x3003d6498603fAD5F232452B21c8B6EB798d20f1"],
+    "id":1
+  }'
+
+// Get reputation statistics
+curl -X POST http://127.0.0.1:8545 \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"poatc_getReputationStats","params":[],"id":1}'</code></pre>
+      </div>
+    </section>
+
+    <!-- Validator Selection Section -->
+    <section id="validator" class="docs-section">
+      <h2>🎯 Validator Selection Algorithm</h2>
+
+      <p>
+        Hệ thống lựa chọn validators thông minh để đảm bảo fairness và performance.
+      </p>
+
+      <h3>📋 Selection Methods</h3>
+
+      <div class="table-wrapper">
+        <table class="docs-table">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Algorithm</th>
+              <th>Use Case</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Random</td>
+              <td>Pseudo-random selection từ validator pool</td>
+              <td>Equal opportunity cho tất cả validators</td>
+            </tr>
+            <tr>
+              <td>Reputation-based</td>
+              <td>Weighted selection dựa trên reputation score</td>
+              <td>Ưu tiên validators có performance tốt</td>
+            </tr>
+            <tr>
+              <td>Hybrid</td>
+              <td>Kết hợp stake + reputation (70/30)</td>
+              <td>Balance giữa stake và performance</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>📐 Hybrid Formula</h3>
+      <div class="code-block">
+        <pre><code>Selection Weight = 
+  (Stake Amount × 0.7) + 
+  (Reputation Score × 0.3)
+
+Probability = Weight / Total_Weights</code></pre>
+      </div>
+
+      <h3>⚙️ Configuration</h3>
+      <div class="code-block">
+        <pre><code>{
+  "validator_selection": {
+    "selection_method": "hybrid",          // random | reputation | hybrid
+    "small_validator_set_size": 5,         // Max validators per round
+    "selection_window": 100,               // Blocks between reselection
+    "stake_weight": 0.7,                   // For hybrid method
+    "reputation_weight": 0.3               // For hybrid method
+  }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- Transaction Tracing Section -->
+    <section id="tracing" class="docs-section">
+      <h2>🔍 Transaction Tracing System</h2>
+
+      <p>
+        Hệ thống tracing theo dõi toàn bộ lifecycle của transactions với cryptographic proofs.
+      </p>
+
+      <h3>🌳 Merkle Tree Structure</h3>
+
+      <p>Mỗi trace event được lưu trong Merkle tree để verification:</p>
+
+      <div class="code-block">
+        <pre><code>                  Root Hash
+                 /          \
+            Hash(0,1)      Hash(2,3)
+            /    \          /    \
+        Event0 Event1  Event2 Event3
+
+Merkle Root được lưu trong block header</code></pre>
+      </div>
+
+      <h3>📊 Trace Events</h3>
+
+      <div class="table-wrapper">
+        <table class="docs-table">
+          <thead>
+            <tr>
+              <th>Event Type</th>
+              <th>Description</th>
+              <th>Data Captured</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>TX_SUBMITTED</td>
+              <td>Transaction sent to mempool</td>
+              <td>Hash, From, To, Value, Gas</td>
+            </tr>
+            <tr>
+              <td>TX_VALIDATED</td>
+              <td>Transaction passed validation</td>
+              <td>Signature, Nonce, Balance check</td>
+            </tr>
+            <tr>
+              <td>TX_INCLUDED</td>
+              <td>Included in block</td>
+              <td>Block number, Position in block</td>
+            </tr>
+            <tr>
+              <td>TX_EXECUTED</td>
+              <td>Executed by EVM</td>
+              <td>Gas used, State changes, Logs</td>
+            </tr>
+            <tr>
+              <td>TX_CONFIRMED</td>
+              <td>Block finalized</td>
+              <td>Receipt, Status, Confirmations</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>⚙️ Configuration</h3>
+      <div class="code-block">
+        <pre><code>{
+  "tracing_system": {
+    "enable_tracing": true,
+    "trace_level": 2,                    // 0=none, 1=basic, 2=detailed
+    "max_trace_events": 10000,           // Max events per block
+    "trace_retention": 86400,            // Seconds to keep traces
+    "enable_merkle_tree": true,          // Enable Merkle proofs
+    "merkle_root_in_block": true         // Include root in block
+  }
+}</code></pre>
+      </div>
+
+      <h3>🔍 API Usage</h3>
+      <div class="code-block">
+        <pre><code>// Get tracing stats
+curl -X POST http://127.0.0.1:8545 \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"poatc_getTracingStats","params":[],"id":1}'
+
+// Response
+{
+  "total_events": 15247,
+  "merkle_roots_generated": 1523,
+  "trace_level": 2,
+  "storage_size_mb": 42.5
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- Time Dynamic Section -->
+    <section id="dynamic" class="docs-section">
+      <h2>⏰ Time Dynamic Management</h2>
+
+      <p>
+        Hệ thống điều chỉnh block time tự động dựa trên network conditions.
+      </p>
+
+      <h3>📊 Dynamic Adjustment Factors</h3>
+
+      <div class="feature-grid">
+        <div class="feature-box">
+          <h4>Transaction Volume</h4>
+          <p>Giảm block time khi có nhiều pending transactions.</p>
+        </div>
+
+        <div class="feature-box">
+          <h4>Network Congestion</h4>
+          <p>Điều chỉnh dựa trên mempool size.</p>
+        </div>
+
+        <div class="feature-box">
+          <h4>Validator Performance</h4>
+          <p>Tăng block time nếu validators chậm.</p>
+        </div>
+      </div>
+
+      <h3>📐 Adjustment Algorithm</h3>
+      <div class="code-block">
+        <pre><code>New Block Time = Base Block Time × Adjustment Factor
+
+Adjustment Factor:
+  - If pending_txs > threshold: 0.7 (faster)
+  - If pending_txs < threshold: 1.3 (slower)
+  - Bounded by [min_block_time, max_block_time]</code></pre>
+      </div>
+
+      <h3>⚙️ Configuration</h3>
+      <div class="code-block">
+        <pre><code>{
+  "time_dynamic": {
+    "enable_dynamic_block_time": true,
+    "base_block_time": 15,               // Seconds
+    "min_block_time": 5,                 // Minimum allowed
+    "max_block_time": 30,                // Maximum allowed
+    "tx_volume_threshold": 100,          // Txs to trigger adjustment
+    "adjustment_interval": 10            // Blocks between adjustments
+  }
+}</code></pre>
+      </div>
+
+      <div class="info-box">
+        <h4>💡 Benefits</h4>
+        <ul>
+          <li><strong>High Load:</strong> Faster blocks để process transactions nhanh hơn</li>
+          <li><strong>Low Load:</strong> Slower blocks để save resources</li>
+          <li><strong>Adaptive:</strong> Tự động điều chỉnh không cần manual intervention</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Access Control Section -->
+    <section id="access" class="docs-section">
+      <h2>🔐 Access Control System</h2>
+
+      <p>
+        Hệ thống whitelist/blacklist để quản lý quyền truy cập vào network.
+      </p>
+
+      <h3>📋 Features</h3>
+
+      <div class="feature-grid">
+        <div class="feature-box">
+          <h4>Whitelist Mode</h4>
+          <p>Chỉ cho phép addresses trong whitelist tương tác.</p>
+        </div>
+
+        <div class="feature-box">
+          <h4>Blacklist Mode</h4>
+          <p>Block addresses trong blacklist.</p>
+        </div>
+
+        <div class="feature-box">
+          <h4>Auto-Expiration</h4>
+          <p>Entries tự động expire sau thời gian định sẵn.</p>
+        </div>
+
+        <div class="feature-box">
+          <h4>Persistence</h4>
+          <p>Lưu trữ vào file JSON để persist across restarts.</p>
+        </div>
+      </div>
+
+      <h3>⚙️ Configuration File</h3>
+      <div class="code-block">
+        <pre><code>// whitelist_blacklist.json
+{
+  "whitelist": {
+    "addresses": [
+      "0x3003d6498603fAD5F232452B21c8B6EB798d20f1",
+      "0xE22bb120826219E8ec00d3af3d16EFE7cADe7B08"
+    ],
+    "enabled": false
+  },
+  "blacklist": {
+    "addresses": [],
+    "enabled": false
+  },
+  "config": {
+    "enable_strict_mode": false,
+    "enable_persistence": true,
+    "enable_expiration": true,
+    "default_expiration": 86400,         // 24 hours
+    "cleanup_interval": 3600,            // 1 hour
+    "max_entries": 1000
+  }
+}</code></pre>
+      </div>
+
+      <div class="warning-box">
+        <h4>⚠️ Security Notes</h4>
+        <ul>
+          <li>Strict mode reject tất cả transactions từ non-whitelisted addresses</li>
+          <li>Blacklist được check trước whitelist</li>
+          <li>Validators không bị affect bởi whitelist/blacklist</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Performance Section -->
+    <section id="performance" class="docs-section">
+      <h2>⚡ Performance & Benchmarks</h2>
+
+      <h3>📊 Current Performance</h3>
+
+      <div class="table-wrapper">
+        <table class="docs-table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Value</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>TPS (Current)</td>
+              <td>10-15 tx/s</td>
+              <td>2 validators, 15s block time</td>
+            </tr>
+            <tr>
+              <td>Block Time</td>
+              <td>2-15 seconds</td>
+              <td>Dynamic adjustment enabled</td>
+            </tr>
+            <tr>
+              <td>Finality</td>
+              <td>1 block</td>
+              <td>Instant finality với PoA</td>
+            </tr>
+            <tr>
+              <td>Gas Limit</td>
+              <td>30,000,000</td>
+              <td>~1,428 simple transfers per block</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>🚀 Optimization Potential</h3>
+
+      <div class="success-box">
+        <h4>✨ Với Optimizations</h4>
+        <ul>
+          <li><strong>Fast Blocks (5s):</strong> 30-45 TPS</li>
+          <li><strong>More Validators (4):</strong> 15-25 TPS</li>
+          <li><strong>Higher Gas Limit (50M):</strong> +60% capacity</li>
+          <li><strong>Combined:</strong> 60-100 TPS potential</li>
+        </ul>
+      </div>
+
+      <h3>📈 TPS Testing</h3>
+
+      <p>Sử dụng built-in TPS test script:</p>
+
+      <div class="code-block">
+        <pre><code># Run TPS test
+.\test_tps.ps1 -TxCount 100
+
+# Test results
+Effective TPS: 11.63 tx/s
+Success Rate: 100%
+Avg Tx/Block: 25
+Blocks Mined: 4</code></pre>
+      </div>
+
+      <p>Chi tiết tại: <code>TPS_TESTING_GUIDE.md</code></p>
+    </section>
+
+    <!-- API Reference Section -->
+    <section id="api" class="docs-section">
+      <h2>🔌 API Reference</h2>
+
+      <p>POATC cung cấp RPC APIs để tương tác với các tính năng nâng cao.</p>
+
+      <h3>📋 Available Methods</h3>
+
+      <div class="table-wrapper">
+        <table class="docs-table">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Parameters</th>
+              <th>Returns</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>poatc_getAnomalyStats</code></td>
+              <td>[]</td>
+              <td>Anomaly detection statistics</td>
+            </tr>
+            <tr>
+              <td><code>poatc_getReputation</code></td>
+              <td>[address]</td>
+              <td>Reputation score for validator</td>
+            </tr>
+            <tr>
+              <td><code>poatc_getReputationStats</code></td>
+              <td>[]</td>
+              <td>Overall reputation statistics</td>
+            </tr>
+            <tr>
+              <td><code>poatc_getValidatorSelectionStats</code></td>
+              <td>[]</td>
+              <td>Validator selection metrics</td>
+            </tr>
+            <tr>
+              <td><code>poatc_getTracingStats</code></td>
+              <td>[]</td>
+              <td>Transaction tracing statistics</td>
+            </tr>
+            <tr>
+              <td><code>poatc_getTimeDynamicStats</code></td>
+              <td>[]</td>
+              <td>Time dynamic parameters</td>
+            </tr>
+            <tr>
+              <td><code>poatc_getWhitelistBlacklistStats</code></td>
+              <td>[]</td>
+              <td>Access control statistics</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>💻 Example Usage</h3>
+
+      <h4>JavaScript (Web3.js)</h4>
+      <div class="code-block">
+        <pre><code>// Get anomaly stats
+const stats = await web3.currentProvider.send({
+  jsonrpc: "2.0",
+  method: "poatc_getAnomalyStats",
+  params: [],
+  id: 1
+});
+
+console.log(stats.result);</code></pre>
+      </div>
+
+      <h4>cURL</h4>
+      <div class="code-block">
+        <pre><code>curl -X POST http://127.0.0.1:8545 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc":"2.0",
+    "method":"poatc_getReputationStats",
+    "params":[],
+    "id":1
+  }'</code></pre>
+      </div>
+
+      <h4>PowerShell</h4>
+      <div class="code-block">
+        <pre><code>Invoke-WebRequest -Uri http://127.0.0.1:8545 `
+  -Method POST `
+  -Body '{"jsonrpc":"2.0","method":"poatc_getTracingStats","params":[],"id":1}' `
+  -ContentType 'application/json'</code></pre>
+      </div>
+
+      <div class="info-box">
+        <h4>📚 Full API Reference</h4>
+        <p>Xem chi tiết tất cả APIs và response formats tại <code>testnet/command.txt</code></p>
+      </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section id="quickstart" class="docs-section">
+      <h2>🚀 Quick Start Guide</h2>
+
+      <h3>1️⃣ Setup Network</h3>
+      <div class="code-block">
+        <pre><code># Initialize nodes
+cd testnet
+..\hdchain.exe init --datadir ./node1 ./poatc-genesis.json
+..\hdchain.exe init --datadir ./node2 ./poatc-genesis.json</code></pre>
+      </div>
+
+      <h3>2️⃣ Start Nodes</h3>
+      <div class="code-block">
+        <pre><code># Use restart script (recommended)
+.\restart_nodes.ps1
+
+# Or start manually
+# See testnet/command.txt for full commands</code></pre>
+      </div>
+
+      <h3>3️⃣ Access Dashboard</h3>
+      <div class="code-block">
+        <pre><code># Start explorer
+cd explorer
+.\start_dashboard.bat
+
+# Open browser
+http://localhost:8080</code></pre>
+      </div>
+
+      <h3>4️⃣ Send Transactions</h3>
+      <div class="code-block">
+        <pre><code># Send test transaction
+Invoke-WebRequest -Uri http://127.0.0.1:8545 `
+  -Method POST `
+  -Body '{
+    "jsonrpc":"2.0",
+    "method":"eth_sendTransaction",
+    "params":[{
+      "from":"0x3003d6498603fAD5F232452B21c8B6EB798d20f1",
+      "to":"0xE22bb120826219E8ec00d3af3d16EFE7cADe7B08",
+      "value":"0x16345785D8A0000",
+      "gas":"0x5208"
+    }],
+    "id":1
+  }' `
+  -ContentType 'application/json'</code></pre>
+      </div>
+
+      <h3>5️⃣ Test TPS</h3>
+      <div class="code-block">
+        <pre><code># Run TPS benchmark
+.\test_tps.ps1 -TxCount 50
+
+# View results in dashboard
+http://localhost:8080</code></pre>
+      </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section id="resources" class="docs-section">
+      <h2>📚 Additional Resources</h2>
+
+      <div class="feature-grid">
+        <div class="feature-box">
+          <h4>📄 Configuration Files</h4>
+          <ul>
+            <li><code>poatc-genesis.json</code> - Genesis config</li>
+            <li><code>whitelist_blacklist.json</code> - Access control</li>
+            <li><code>command.txt</code> - Command reference</li>
+          </ul>
+        </div>
+
+        <div class="feature-box">
+          <h4>🔧 Scripts</h4>
+          <ul>
+            <li><code>restart_nodes.ps1</code> - Node management</li>
+            <li><code>test_tps.ps1</code> - TPS testing</li>
+            <li><code>start_dashboard.bat</code> - Explorer launcher</li>
+          </ul>
+        </div>
+
+        <div class="feature-box">
+          <h4>📖 Documentation</h4>
+          <ul>
+            <li><code>TPS_TESTING_GUIDE.md</code> - Performance testing</li>
+            <li><code>TECHNICAL_DOCUMENTATION.md</code> - Technical details</li>
+            <li><code>README.md</code> - Project overview</li>
+          </ul>
+        </div>
+
+        <div class="feature-box">
+          <h4>🌐 Tools</h4>
+          <ul>
+            <li>Explorer Dashboard - Web UI</li>
+            <li>RPC Console - Direct API access</li>
+            <li>Geth Attach - JavaScript console</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="success-box">
+        <h4>🎓 Learning Path</h4>
+        <ol>
+          <li>Read this documentation</li>
+          <li>Setup local network (Quick Start)</li>
+          <li>Explore dashboard features</li>
+          <li>Test POATC APIs</li>
+          <li>Run TPS benchmarks</li>
+          <li>Experiment with configurations</li>
+        </ol>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Beautiful Footer -->
+  <footer class="docs-footer">
+    <div class="footer-content">
+      <div class="footer-grid">
+        <!-- About Section -->
+        <div class="footer-section">
+          <h3>📚 About POATC</h3>
+          <p style="color: rgba(255,255,255,0.8); font-size: 14px; line-height: 1.8;">
+            Layer 1 blockchain với cơ chế đồng thuận Proof-of-Authority kết hợp 6 tính năng nâng cao 
+            để đảm bảo security, fairness và transparency.
+          </p>
+        </div>
+        
+        <!-- Quick Links -->
+        <div class="footer-section">
+          <h3>🔗 Quick Links</h3>
+          <ul>
+            <li><a href="#overview">📖 Overview</a></li>
+            <li><a href="#architecture">🏗️ Architecture</a></li>
+            <li><a href="#features">🚀 Core Features</a></li>
+            <li><a href="#api">🔌 API Reference</a></li>
+            <li><a href="#performance">⚡ Performance</a></li>
+          </ul>
+        </div>
+        
+        <!-- Resources -->
+        <div class="footer-section">
+          <h3>📁 Resources</h3>
+          <ul>
+            <li><a href="index.html">🏠 Explorer Dashboard</a></li>
+            <li><a href="../TPS_TESTING_GUIDE.md">📊 TPS Testing Guide</a></li>
+            <li><a href="../command.txt">💻 Command Reference</a></li>
+            <li><a href="../poatc-genesis.json">⚙️ Genesis Config</a></li>
+          </ul>
+        </div>
+        
+        <!-- Features -->
+        <div class="footer-section">
+          <h3>✨ Key Features</h3>
+          <ul>
+            <li>🛡️ Anomaly Detection</li>
+            <li>⭐ Reputation System</li>
+            <li>🎯 Validator Selection</li>
+            <li>🔍 Transaction Tracing</li>
+            <li>⏰ Time Dynamic</li>
+            <li>🔐 Access Control</li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Footer Bottom -->
+      <div class="footer-bottom">
+        <div class="footer-social">
+          <a href="#" class="social-link" title="GitHub">🐙</a>
+          <a href="#" class="social-link" title="Discord">💬</a>
+          <a href="#" class="social-link" title="Twitter">🐦</a>
+          <a href="#" class="social-link" title="Telegram">✈️</a>
+        </div>
+        <p style="margin-top: 24px; font-weight: 600; font-size: 16px; color: white;">
+          POATC Blockchain - Advanced Layer 1 Consensus
+        </p>
+        <p>Built on Ethereum (Geth) | Proof-of-Authority | Version 1.0</p>
+        <p>Network ID: 1337 | TPS: 10-15 | Block Time: 2-15s</p>
+        <p style="margin-top: 20px; font-size: 12px;">
+          © 2025 POATC Project | Hackathon Demo | All Rights Reserved
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
+

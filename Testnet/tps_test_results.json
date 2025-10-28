@@ -1,0 +1,11 @@
+﻿{
+    "effective_tps":  11.28,
+    "blocks_mined":  4,
+    "total_mined_txs":  500,
+    "duration_seconds":  44.31,
+    "timestamp":  "2025-10-14 00:32:50",
+    "successful":  500,
+    "failed":  0,
+    "send_tps":  11.28,
+    "total_sent":  500
+}

@@ -1,0 +1,105 @@
+{
+  "config": {
+    "chainId": 1337,
+    "homesteadBlock": 0,
+    "eip150Block": 0,
+    "eip155Block": 0,
+    "eip158Block": 0,
+    "byzantiumBlock": 0,
+    "constantinopleBlock": 0,
+    "petersburgBlock": 0,
+    "istanbulBlock": 0,
+    "berlinBlock": 0,
+    "londonBlock": 0,
+    "arrowGlacierBlock": 0,
+    "grayGlacierBlock": 0,
+    "shanghaiTime": null,
+    "cancunTime": null,
+    "clique": {
+      "period": 5,
+      "epoch": 30000
+    },
+    "poatc": {
+      "enable_anomaly_detection": true,
+      "enable_whitelist_blacklist": true,
+      "enable_validator_selection": true,
+      "enable_reputation_system": true,
+      "enable_tracing_system": true,
+      "enable_time_dynamic": true,
+      "anomaly_detection_config": {
+        "enable_rapid_signing_detection": true,
+        "enable_suspicious_pattern_detection": true,
+        "enable_timestamp_drift_detection": true,
+        "max_blocks_per_signer": 3,
+        "consecutive_block_threshold": 3,
+        "timestamp_drift_threshold": 60,
+        "evaluation_window": "1h0m0s",
+        "alert_threshold": 0.8
+      },
+      "whitelist_blacklist_config": {
+        "enable_strict_mode": false,
+        "enable_persistence": true,
+        "enable_expiration": true,
+        "default_expiration": "24h0m0s",
+        "cleanup_interval": "1h0m0s",
+        "max_entries": 1000
+      },
+      "validator_selection_config": {
+        "enable_validator_selection": true,
+        "selection_method": "hybrid",
+        "small_validator_set_size": 5,
+        "selection_window": "1h0m0s",
+        "stake_weight": 0.4,
+        "reputation_weight": 0.6
+      },
+      "reputation_config": {
+        "enable_reputation_system": true,
+        "initial_reputation": 1.0,
+        "max_reputation": 10.0,
+        "min_reputation": 0.1,
+        "block_mining_weight": 0.4,
+        "uptime_weight": 0.3,
+        "consistency_weight": 0.2,
+        "penalty_weight": 0.1,
+        "decay_rate": 0.05,
+        "update_interval": "1h0m0s",
+        "evaluation_window": "24h0m0s",
+        "high_reputation_threshold": 8.0,
+        "low_reputation_threshold": 2.0
+      },
+      "tracing_config": {
+        "enable_tracing": true,
+        "trace_level": 2,
+        "max_trace_events": 10000,
+        "trace_retention": "24h0m0s",
+        "enable_merkle_tree": true,
+        "enable_metrics": true,
+        "enable_persistence": true,
+        "merkle_root_in_block": true
+      },
+      "time_dynamic_config": {
+        "enable_dynamic_block_time": true,
+        "enable_dynamic_validator_selection": true,
+        "enable_dynamic_reputation_decay": true,
+        "base_block_time": 15,
+        "min_block_time": 5,
+        "max_block_time": 60,
+        "tx_volume_threshold": 100,
+        "selection_interval": "10m0s",
+        "decay_interval": "1m0s",
+        "decay_rate": 0.05
+      }
+    }
+  },
+  "difficulty": "0x1",
+  "gasLimit": "0x8000000",
+  "alloc": {
+    "0x3003d6498603fad5f232452b21c8b6eb798d20f1": {
+      "balance": "0x3635C9ADC5DEA00000"
+    },
+    "0xe22bb120826219e8ec00d3af3d16efe7cade7b08": {
+      "balance": "0x3635C9ADC5DEA00000"
+    }
+  },
+  "extraData": "0x00000000000000000000000000000000000000000000000000000000000000003003d6498603fad5f232452b21c8b6eb798d20f1e22bb120826219e8ec00d3af3d16efe7cade7b0800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+}

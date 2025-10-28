@@ -1,0 +1,518 @@
+/* ========================================
+   POATC Explorer - Two-Tier
+   Modern Web3 Blockchain Explorer UI
+   ======================================== */
+
+/* Main Header Container */
+.navbar {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --------------------------------------- */
+/* Dark Theme */
+/* --------------------------------------- */
+[data-theme="dark"] .navbar {
+  background: rgba(18, 18, 20, 0.9);
+  border-bottom-color: rgba(102, 126, 234, 0.15);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* --------------------------------------- */
+/* Scrolled State - More Transparent */
+/* --------------------------------------- */
+.navbar.scrolled {
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .navbar.scrolled {
+  background: rgba(18, 18, 20, 0.8);
+}
+
+
+/* ========================================
+   TOP TIER - Brand + Controls
+   ======================================== */
+
+.nav-top-tier {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* --------------------------------------- */
+/* Dark Theme */
+/* --------------------------------------- */
+[data-theme="dark"] .nav-top-tier {
+  border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+/* --------------------------------------- */
+/* Nav Container */
+/* --------------------------------------- */
+.nav-top-tier .nav-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+/* --------------------------------------- */
+/* Logo Design */
+/* --------------------------------------- */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+}
+
+/* --------------------------------------- */
+/* Logo Icon */
+/* --------------------------------------- */
+.logo-icon {
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* --------------------------------------- */
+/* Logo Icon Before */
+/* --------------------------------------- */
+.logo-icon::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.12), transparent);
+  transform: rotate(45deg);
+  animation: shimmerLogo 4s ease-in-out infinite;
+}
+
+/* --------------------------------------- */
+/* Shimmer Logo */
+/* --------------------------------------- */
+@keyframes shimmerLogo {
+  0%, 100% { transform: translateX(-100%) rotate(45deg); }
+  50% { transform: translateX(100%) rotate(45deg); }
+}
+
+
+/* --------------------------------------- */
+/* Logo Icon Hover */
+/* --------------------------------------- */
+.logo-icon:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.35);
+}
+
+.logo-icon svg {
+  position: relative;
+  z-index: 1;
+}
+
+.logo-text h1 {
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+.logo-text .tagline {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+/* --------------------------------------- */
+
+/* Nav Tools Container */
+.nav-tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Network Selector - Custom Styled */
+.network-selector-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.network-selector-wrapper:hover {
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.12);
+}
+
+.network-selector-wrapper .selector-icon {
+  color: #667eea;
+  flex-shrink: 0;
+}
+
+.network-selector {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  outline: none;
+  padding-right: 8px;
+  appearance: none;
+}
+
+.network-selector option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* --------------------------------------- */
+
+.chevron-icon {
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.network-selector-wrapper:hover .chevron-icon {
+  transform: translateY(2px);
+}
+
+/* Faucet Button */
+.faucet-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+}
+
+.faucet-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+}
+
+.faucet-btn:active {
+  transform: translateY(0);
+}
+
+/* Wallet Button */
+.wallet-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wallet-btn:hover {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.12);
+}
+
+.wallet-btn.connected {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+/* --------------------------------------- */
+.wallet-btn.connected:hover {
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+}
+
+/* --------------------------------------- */
+/* Theme Toggle */
+.theme-toggle {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.theme-toggle:hover {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+  transform: scale(1.05);
+}
+
+/* --------------------------------------- */
+.theme-icon {
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+/* --------------------------------------- */
+/* Connection Status */
+.connection-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* --------------------------------------- */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #94a3b8;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.connection-status.connected .status-dot {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+/* --------------------------------------- */
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+/* --------------------------------------- */
+.status-text {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* --------------------------------------- */
+.connection-status.connected .status-text {
+  color: #10b981;
+}
+
+/* --------------------------------------- */
+/* ========================================
+   BOTTOM TIER - Navigation Links
+   ======================================== */
+
+.nav-bottom-tier {
+  background: rgba(102, 126, 234, 0.02);
+}
+
+[data-theme="dark"] .nav-bottom-tier {
+  background: rgba(102, 126, 234, 0.03);
+}
+
+.nav-bottom-tier .nav-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* --------------------------------------- */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  margin: 0;
+}
+
+/* --------------------------------------- */
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  border-radius: 0;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.nav-link svg {
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.nav-link:hover svg {
+  transform: translateY(-1px);
+}
+
+.nav-link.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+  background: rgba(102, 126, 234, 0.08);
+}
+
+.nav-link.docs-link {
+  margin-left: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+  border-bottom: none;
+}
+
+.nav-link.docs-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 1200px) {
+  .nav-top-tier .nav-container,
+  .nav-bottom-tier .nav-container {
+    padding: 12px 24px;
+  }
+  
+  .nav-tools {
+    gap: 8px;
+  }
+  
+  .btn-text {
+    display: none;
+  }
+  
+  /* --------------------------------------- */
+  .faucet-btn,
+  .wallet-btn {
+    padding: 10px 12px;
+  }
+}
+
+/* --------------------------------------- */
+@media (max-width: 768px) {
+  .navbar {
+    position: relative;
+  }
+  
+  .nav-top-tier .nav-container {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+  
+  .nav-tools {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  
+  /* --------------------------------------- */
+  .nav-menu {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* --------------------------------------- */
+  .nav-link span {
+    display: none;
+  }
+  
+  /* --------------------------------------- */
+  .nav-link {
+    padding: 12px 16px;
+  }
+}
+
+/* ========================================
+   UTILITY ANIMATIONS
+   ======================================== */
+
+/* --------------------------------------- */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------- */
+.navbar {
+  animation: slideDown 0.4s ease-out;
+}
+
+/* Smooth scroll padding for sticky header */
+/* --------------------------------------- */
+html {
+  scroll-padding-top: 140px;
+}
+

@@ -1,98 +1,730 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>POATCscan — Mini Explorer</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <header class="topbar">
-      <div class="container row">
-        <div class="brand">POATC<span>scan</span></div>
-        <nav class="nav">
-          <a href="#/" class="nav-link active" data-tab="home">Home</a>
-          <a href="#/validators" class="nav-link" data-tab="validators">Validators</a>
-          <a href="#/timedyn" class="nav-link" data-tab="timedyn">Time Dynamic</a>
-        </nav>
-        <div class="network-pill" id="network-pill">Local · 1337</div>
-      </div>
-    </header>
-
-    <section class="search">
-      <div class="container">
-        <div class="search-card">
-          <div class="title">Khám phá mạng POATC của bạn</div>
-          <div class="search-row">
-            <input id="searchInput" placeholder="Tìm block số/hash, tx hash, hoặc địa chỉ" />
-            <button id="searchBtn">Tìm</button>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>POATC Explorer - Advanced Blockchain Analytics</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./header-redesign.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <script>
+    // Scroll Effect for Header
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+  </script>
+</head>
+<body>
+  <!-- Header Navigation - Two-Tier Design -->
+  <header class="navbar">
+    <!-- Top Tier: Brand + Controls -->
+    <div class="nav-top-tier">
+      <div class="nav-container">
+        <div class="nav-brand">
+          <div class="logo">
+            <div class="logo-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                <path d="M2 17l10 5 10-5"></path>
+                <path d="M2 12l10 5 10-5"></path>
+              </svg>
+            </div>
+            <div class="logo-text">
+              <h1>POATC Explorer</h1>
+              <span class="tagline">Proof-of-AI-Tracing Analytics</span>
+            </div>
           </div>
-          <div class="subrow">
-            RPC: <input id="rpcInput" value="http://localhost:8547" />
-            <button id="rpcSave">Kết nối</button>
-            <span id="rpcStatus" class="muted"></span>
+        </div>
+        
+        <div class="nav-tools">
+          <div class="network-selector-wrapper">
+            <svg class="selector-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            <select id="networkSelect" class="network-selector">
+              <option value="http://127.0.0.1:8545">Node 1</option>
+              <option value="http://127.0.0.1:8549">Node 2</option>
+            </select>
+            <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          
+          <button class="faucet-btn" id="faucetBtn" title="Get Test Tokens">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+            </svg>
+            <span class="btn-text">Faucet</span>
+          </button>
+          
+          <button class="wallet-btn" id="walletBtn" title="Connect MetaMask">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span class="btn-text">Connect Wallet</span>
+          </button>
+          
+          <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+            <svg class="theme-icon sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="theme-icon moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+          
+          <div class="connection-status" id="connectionStatus">
+            <span class="status-dot"></span>
+            <span class="status-text">Connecting...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Bottom Tier: Navigation Links -->
+    <div class="nav-bottom-tier">
+      <div class="nav-container">
+        <nav class="nav-menu">
+          <a href="#" class="nav-link active" data-section="home">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Home</span>
+          </a>
+          <a href="#" class="nav-link" data-section="blocks">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            </svg>
+            <span>Blocks</span>
+          </a>
+          <a href="#" class="nav-link" data-section="transactions">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+            <span>Transactions</span>
+          </a>
+          <a href="#" class="nav-link" data-section="validators">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <span>Validators</span>
+          </a>
+          <a href="#" class="nav-link" data-section="analytics">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <span>POATC Analytics</span>
+          </a>
+          <a href="#" class="nav-link" data-section="contracts">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="16" rx="2" ry="2"></rect>
+              <path d="M7 8h10M7 12h6M7 16h8"></path>
+            </svg>
+            <span>Contracts</span>
+          </a>
+          <a href="docs.html" class="nav-link docs-link" target="_blank">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <span>Documentation</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Faucet Modal -->
+  <div class="modal" id="faucetModal">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h2>💧 POATC Faucet</h2>
+        <button class="modal-close" onclick="document.getElementById('faucetModal').style.display='none'">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="faucet-info">
+          <p style="color: var(--text-secondary); margin-bottom: 20px;">
+            Get free test tokens for POATC Testnet. You can request 10 ETH every 24 hours.
+          </p>
+          
+          <div class="faucet-stats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+            <div style="background: var(--bg-dark); padding: 16px; border-radius: 10px; text-align: center;">
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Amount</div>
+              <div style="font-size: 20px; font-weight: 700; color: var(--primary);">10 ETH</div>
+            </div>
+            <div style="background: var(--bg-dark); padding: 16px; border-radius: 10px; text-align: center;">
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Cooldown</div>
+              <div style="font-size: 20px; font-weight: 700; color: var(--warning);">24h</div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="faucetAddress" style="display: block; margin-bottom: 8px; font-weight: 600;">Wallet Address</label>
+            <input 
+              type="text" 
+              id="faucetAddress" 
+              placeholder="0x..." 
+              style="width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'SF Mono', monospace; font-size: 14px;"
+            />
+          </div>
+          
+          <div id="faucetStatus" style="margin-top: 16px; padding: 12px; border-radius: 8px; display: none;"></div>
+          
+          <button 
+            id="requestTokensBtn" 
+            style="width: 100%; margin-top: 20px; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 16px; cursor: pointer; transition: all 0.3s;"
+            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(102, 126, 234, 0.4)'"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+          >
+            💧 Request Test Tokens
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Home Section -->
+    <section id="home-section" class="content-section active">
+      <!-- Hero Stats -->
+      <div class="hero-stats">
+        <div class="stat-card primary">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-content">
+            <div class="stat-label">Latest Block</div>
+            <div class="stat-value" id="latestBlock">-</div>
+            <div class="stat-change" id="blockChange">+0</div>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">🚀</div>
+          <div class="stat-content">
+            <div class="stat-label">Current TPS</div>
+            <div class="stat-value" id="currentTPS">0.00</div>
+            <div class="stat-change">tx/s</div>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">💎</div>
+          <div class="stat-content">
+            <div class="stat-label">Active Validators</div>
+            <div class="stat-value" id="activeValidators">-</div>
+            <div class="stat-change">online</div>
+          </div>
+        </div>
+        
+        <div class="stat-card alert">
+          <div class="stat-icon">🚨</div>
+          <div class="stat-content">
+            <div class="stat-label">Anomalies Detected</div>
+            <div class="stat-value" id="anomalyCount">-</div>
+            <div class="stat-change">total</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TPS Stats Row -->
+      <div class="tps-stats-row">
+        <div class="tps-stat-card">
+          <div class="tps-label">⏱️ Avg Block Time</div>
+          <div class="tps-value" id="avgBlockTime">-</div>
+        </div>
+        <div class="tps-stat-card">
+          <div class="tps-label">📊 Avg TPS</div>
+          <div class="tps-value" id="avgTPS">0.00</div>
+        </div>
+        <div class="tps-stat-card">
+          <div class="tps-label">🔝 Peak TPS</div>
+          <div class="tps-value" id="peakTPS">0.00</div>
+        </div>
+        <div class="tps-stat-card">
+          <div class="tps-label">💸 Total Txs</div>
+          <div class="tps-value" id="totalTxs">0</div>
+        </div>
+      </div>
+
+      <!-- Quick Access Documentation Banner -->
+      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; padding: 32px; margin-bottom: 32px; color: white; box-shadow: var(--shadow-lg);">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 300px;">
+            <h3 style="font-size: 28px; font-weight: 700; margin-bottom: 12px; color: white;">📚 POATC Layer 1 Documentation</h3>
+            <p style="font-size: 16px; opacity: 0.95; margin-bottom: 0; line-height: 1.6;">
+              Khám phá chi tiết về cơ chế đồng thuận Proof-of-Authority with Advanced Consensus - 
+              6 tính năng nâng cao, kiến trúc hệ thống, API reference và performance benchmarks.
+            </p>
+          </div>
+          <a href="docs.html" target="_blank" style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 32px; background: white; color: #667eea; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 16px; white-space: nowrap; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'">
+            <span>Read Full Documentation</span>
+            <span style="font-size: 20px;">→</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- POATC Features Highlight -->
+      <div class="features-grid">
+        <div class="feature-card gradient-1">
+          <div class="feature-header">
+            <h3>🛡️ Anomaly Detection System</h3>
+            <div class="feature-status active">ACTIVE</div>
+          </div>
+          <div class="feature-content">
+            <div class="feature-metric">
+              <span class="metric-label">Detection Rate</span>
+              <span class="metric-value" id="detectionRate">98.5%</span>
+            </div>
+            <div class="feature-metric">
+              <span class="metric-label">Violations Today</span>
+              <span class="metric-value" id="violationsToday">1,039</span>
+            </div>
+            <div class="feature-description">
+              Real-time monitoring of validator behavior patterns, consecutive block signing, and timestamp anomalies.
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-card gradient-2">
+          <div class="feature-header">
+            <h3>⭐ Reputation System</h3>
+            <div class="feature-status active">ACTIVE</div>
+          </div>
+          <div class="feature-content">
+            <div class="feature-metric">
+              <span class="metric-label">Avg Reputation</span>
+              <span class="metric-value" id="avgReputation">0.847</span>
+            </div>
+            <div class="feature-metric">
+              <span class="metric-label">Decay Rate</span>
+              <span class="metric-value">0.05%/hr</span>
+            </div>
+            <div class="feature-description">
+              Dynamic reputation scoring based on validator performance, uptime, and consistency metrics.
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-card gradient-3">
+          <div class="feature-header">
+            <h3>🎯 Smart Validator Selection</h3>
+            <div class="feature-status active">ACTIVE</div>
+          </div>
+          <div class="feature-content">
+            <div class="feature-metric">
+              <span class="metric-label">Selection Method</span>
+              <span class="metric-value">Hybrid</span>
+            </div>
+            <div class="feature-metric">
+              <span class="metric-label">Efficiency</span>
+              <span class="metric-value" id="selectionEfficiency">94.2%</span>
+            </div>
+            <div class="feature-description">
+              Intelligent validator selection combining stake weight, reputation score, and performance history.
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-card gradient-4">
+          <div class="feature-header">
+            <h3>🔍 Transaction Tracing</h3>
+            <div class="feature-status active">ACTIVE</div>
+          </div>
+          <div class="feature-content">
+            <div class="feature-metric">
+              <span class="metric-label">Trace Events</span>
+              <span class="metric-value" id="traceEvents">15,247</span>
+            </div>
+            <div class="feature-metric">
+              <span class="metric-label">Merkle Proofs</span>
+              <span class="metric-value">Enabled</span>
+            </div>
+            <div class="feature-description">
+              Complete transaction lifecycle tracking with cryptographic proof generation and verification.
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-card gradient-5">
+          <div class="feature-header">
+            <h3>⏰ Dynamic Time Management</h3>
+            <div class="feature-status active">ACTIVE</div>
+          </div>
+          <div class="feature-content">
+            <div class="feature-metric">
+              <span class="metric-label">Current Block Time</span>
+              <span class="metric-value" id="dynamicBlockTime">15s</span>
+            </div>
+            <div class="feature-metric">
+              <span class="metric-label">Adaptation Rate</span>
+              <span class="metric-value">Auto</span>
+            </div>
+            <div class="feature-description">
+              Adaptive block timing based on network load, transaction volume, and validator performance.
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-card gradient-6">
+          <div class="feature-header">
+            <h3>🛡️ Access Control</h3>
+            <div class="feature-status active">ACTIVE</div>
+          </div>
+          <div class="feature-content">
+            <div class="feature-metric">
+              <span class="metric-label">Whitelist Entries</span>
+              <span class="metric-value" id="whitelistCount">127</span>
+            </div>
+            <div class="feature-metric">
+              <span class="metric-label">Blacklist Entries</span>
+              <span class="metric-value" id="blacklistCount">23</span>
+            </div>
+            <div class="feature-description">
+              Advanced access control with automatic threat detection and dynamic policy enforcement.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-section">
+        <div class="chart-container">
+          <div class="chart-header">
+            <h3>📈 Network Performance</h3>
+            <div class="chart-controls">
+              <button class="chart-btn active" data-period="1h">1H</button>
+              <button class="chart-btn" data-period="24h">24H</button>
+              <button class="chart-btn" data-period="7d">7D</button>
+            </div>
+          </div>
+          <canvas id="performanceChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+          <div class="chart-header">
+            <h3>🚨 Anomaly Detection Timeline</h3>
+            <div class="anomaly-legend">
+              <span class="legend-item high">High Severity</span>
+              <span class="legend-item medium">Medium</span>
+              <span class="legend-item low">Low</span>
+            </div>
+          </div>
+          <canvas id="anomalyChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="activity-section">
+        <div class="activity-panel">
+          <div class="panel-header">
+            <h3>📦 Latest Blocks</h3>
+            <a href="#" class="view-all">View All</a>
+          </div>
+          <div class="block-list" id="latestBlocks"></div>
+        </div>
+
+        <div class="activity-panel">
+          <div class="panel-header">
+            <h3>💸 Latest Transactions</h3>
+            <a href="#" class="view-all">View All</a>
+          </div>
+          <div class="tx-list" id="latestTransactions"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Blocks Section -->
+    <section id="blocks-section" class="content-section">
+      <div class="section-header">
+        <h2>📦 Blocks</h2>
+        <div class="section-stats">
+          <span>Total: <strong id="totalBlocks">-</strong></span>
+          <span>Avg Size: <strong id="avgBlockSize">-</strong></span>
+        </div>
+      </div>
+      
+      <div class="data-table-container">
+        <table class="data-table" id="blocksTable">
+          <thead>
+            <tr>
+              <th>Block</th>
+              <th>Age</th>
+              <th>Txn</th>
+              <th>Miner</th>
+              <th>Gas Used</th>
+              <th>Gas Limit</th>
+              <th>Reward</th>
+            </tr>
+          </thead>
+          <tbody id="blocksTableBody">
+            <!-- Dynamic content -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Transactions Section -->
+    <section id="transactions-section" class="content-section">
+      <div class="section-header">
+        <h2>💸 Transactions</h2>
+        <div class="tx-tools">
+          <button class="btn primary" id="sendTxBtn">Send Transaction</button>
+          <div class="filter-dropdown">
+            <button class="btn secondary">Filter ▼</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="data-table-container">
+        <table class="data-table" id="transactionsTable">
+          <thead>
+            <tr>
+              <th>Txn Hash</th>
+              <th>Method</th>
+              <th>Block</th>
+              <th>Age</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Value</th>
+              <th>Fee</th>
+            </tr>
+          </thead>
+          <tbody id="transactionsTableBody">
+            <!-- Dynamic content -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Validators Section -->
+    <section id="validators-section" class="content-section">
+      <div class="section-header">
+        <h2>👥 Validators</h2>
+        <div class="validator-stats">
+          <span>Active: <strong id="activeValidatorCount">-</strong></span>
+          <span>Total Stake: <strong id="totalStake">-</strong></span>
+        </div>
+      </div>
+      
+      <div class="validators-grid" id="validatorsGrid">
+        <!-- Dynamic content -->
+      </div>
+    </section>
+
+    <!-- Analytics Section -->
+    <section id="analytics-section" class="content-section">
+      <div class="section-header">
+        <h2>📊 POATC Analytics</h2>
+        <div class="analytics-controls">
+          <button class="btn secondary" id="exportBtn">Export Data</button>
+          <button class="btn secondary" id="refreshAnalytics">Refresh</button>
+        </div>
+      </div>
+      
+      <div class="analytics-grid">
+        <div class="analytics-card">
+          <h3>🚨 Anomaly Detection Details</h3>
+          <div class="analytics-content" id="anomalyDetails">
+            <!-- Dynamic content -->
+          </div>
+        </div>
+        
+        <div class="analytics-card">
+          <h3>⭐ Reputation Analytics</h3>
+          <div class="analytics-content" id="reputationDetails">
+            <!-- Dynamic content -->
+          </div>
+        </div>
+        
+        <div class="analytics-card">
+          <h3>🎯 Validator Selection Metrics</h3>
+          <div class="analytics-content" id="selectionDetails">
+            <!-- Dynamic content -->
+          </div>
+        </div>
+        
+        <div class="analytics-card">
+          <h3>🔍 Tracing System Status</h3>
+          <div class="analytics-content" id="tracingDetails">
+            <!-- Dynamic content -->
           </div>
         </div>
       </div>
     </section>
 
-    <main class="container grid">
-      <section class="card" id="homeView">
-        <div class="card-header">
-          <h3>Blocks mới nhất</h3>
-          <div class="spacer"></div>
-          <button id="refreshBtn" class="ghost">Refresh</button>
-        </div>
-        <div class="statsbar" id="statsBar">
-          <div class="stat"><div class="k">Block</div><div class="v" id="statBlock">-</div></div>
-          <div class="stat"><div class="k">Chain ID</div><div class="v" id="statChain">-</div></div>
-          <div class="stat"><div class="k">Peers</div><div class="v" id="statPeers">-</div></div>
-          <div class="stat"><div class="k">Gas Price</div><div class="v" id="statGas">-</div></div>
-        </div>
-        <div id="blocksList" class="table"></div>
-      </section>
-
-      <section class="card" id="rightPanel">
-        <div class="card-header">
-          <h3>Giao dịch gần đây</h3>
-        </div>
-        <div id="txsList" class="table"></div>
-      </section>
-
-      <section class="card" id="detailView" style="display:none"></section>
-
-      <section class="card" id="validatorsView" style="display:none">
-        <div class="card-header">
-          <h3>Validator Selection</h3>
-          <div class="spacer"></div>
-          <button id="vsRefresh" class="ghost">Refresh</button>
-        </div>
-        <div id="validatorsStats" class="kv"></div>
-        <div id="validatorsTable" class="table"></div>
-      </section>
-
-      <section class="card" id="timeDynView" style="display:none">
-        <div class="card-header">
-          <h3>Time Dynamic</h3>
-          <div class="spacer"></div>
-          <button id="tdRefresh" class="ghost">Refresh</button>
-        </div>
-        <div id="tdStats" class="kv"></div>
-      </section>
-    </main>
-
-    <footer class="footer">
-      <div class="container row">
-        <div>POATCscan · Mini Explorer</div>
-        <div class="muted">© 2025</div>
+    <!-- Smart Contract Interaction Section -->
+    <section id="contracts-section" class="content-section">
+      <div class="section-header">
+        <h2>🔗 Verified Contracts</h2>
+        <p class="section-description">Browse and interact with verified smart contracts on the POATC network.</p>
       </div>
-    </footer>
+      
+      <!-- Loading indicator -->
+      <div id="contractLoading" class="loading-container" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>Loading verified contracts...</p>
+      </div>
 
-    <script src="app.js"></script>
-  </body>
-  </html>
+      <!-- Contract content -->
+      <div id="contractContent">
+        <div id="contractInfo">
+          <!-- Verified contracts will be rendered here -->
+        </div>
+        
+        <div id="contractMethods">
+          <!-- Contract methods will be rendered here -->
+        </div>
+      </div>
 
+      <div id="contractVerification" class="card hidden" style="margin-top: 1.5rem;">
+        <h3>Contract Verification</h3>
+        <div class="form-group">
+          <label for="contractNameInput">Contract Name</label>
+          <input type="text" id="contractNameInput" placeholder="e.g., DataTraceability" class="input-field">
+        </div>
+        <div class="form-group">
+          <label for="contractVersionInput">Version</label>
+          <input type="text" id="contractVersionInput" placeholder="e.g., 1.0" class="input-field">
+        </div>
+        <div class="form-group">
+          <label for="contractSourceInput">Source Code</label>
+          <textarea id="contractSourceInput" rows="10" placeholder="Paste your Solidity source code here..." class="input-field"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="contractConstructorArgs">Constructor Arguments (if any)</label>
+          <input type="text" id="contractConstructorArgs" placeholder="e.g., 0x1234..." class="input-field">
+        </div>
+        <button id="submitVerificationBtn" class="btn primary">Submit Verification</button>
+        <div id="verificationStatus" class="status-message"></div>
+      </div>
 
+      <div id="inputDataDecoder" class="card hidden" style="margin-top: 1.5rem;">
+        <h3>Input Data Decoder</h3>
+        <div class="form-group">
+          <label for="inputDataInput">Input Data (Hex)</label>
+          <textarea id="inputDataInput" rows="3" placeholder="0x..." class="input-field"></textarea>
+        </div>
+        <button id="decodeInputBtn" class="btn secondary">Decode Input Data</button>
+        <div id="decodedResult" class="function-result"></div>
+      </div>
+
+      <div id="contractReadFunctions" class="card hidden" style="margin-top: 1.5rem;">
+        <h3>Read Functions</h3>
+        <!-- Dynamic read functions will be rendered here -->
+      </div>
+
+      <div id="contractWriteFunctions" class="card hidden" style="margin-top: 1.5rem;">
+        <h3>Write Functions</h3>
+        <!-- Dynamic write functions will be rendered here -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Modals -->
+  <div id="blockModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Block Details</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body" id="blockModalBody">
+        <!-- Dynamic content -->
+      </div>
+    </div>
+  </div>
+
+  <div id="txModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Transaction Details</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body" id="txModalBody">
+        <!-- Dynamic content -->
+      </div>
+    </div>
+  </div>
+
+  <div id="sendTxModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Send Transaction</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="sendTxForm" class="tx-form">
+          <div class="form-group">
+            <label>From Address</label>
+            <input type="text" id="txFrom" value="0x3003d6498603fAD5F232452B21c8B6EB798d20f1" required>
+          </div>
+          <div class="form-group">
+            <label>To Address</label>
+            <input type="text" id="txTo" value="0xE22bb120826219E8ec00d3af3d16EFE7cADe7B08" required>
+          </div>
+          <div class="form-group">
+            <label>Value (ETH)</label>
+            <input type="number" id="txValue" step="0.0001" value="0.1" required>
+          </div>
+          <div class="form-group">
+            <label>Gas Limit</label>
+            <input type="number" id="txGas" value="21000">
+          </div>
+          <div class="form-group">
+            <label>Data (Optional)</label>
+            <input type="text" id="txData" placeholder="0x">
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn primary">Send Transaction</button>
+            <button type="button" class="btn secondary modal-close">Cancel</button>
+          </div>
+        </form>
+        <div id="txResult" class="tx-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications -->
+  <div id="notifications" class="notifications"></div>
+
+  <!-- 
+    ============================================
+    EXPLORER SCRIPT:
+    ============================================
+    
+    POATC Explorer - RPC-Only Version
+    - Complete features: Wallet, Faucet, Charts, POATC Analytics
+    - Real-time blockchain data directly from RPC
+    - All blocks & transactions visible (last 50 blocks)
+    - No backend or database required
+    - Simple and lightweight
+  -->
+  <script src="./app.js"></script>
+</body>
+</html>

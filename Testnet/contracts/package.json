@@ -1,0 +1,54 @@
+{
+  "name": "poatc-contracts",
+  "version": "1.0.0",
+  "description": "Smart contracts for POATC blockchain - Data Traceability & Provenance",
+  "main": "deploy.js",
+  "scripts": {
+    "compile": "node compile.js",
+    "deploy": "node deploy.js",
+    "upload-data": "node upload_sample_data.js",
+    "full-deploy": "npm run compile && npm run deploy && npm run upload-data",
+    "test": "node test_contract.js",
+    "hh:init": "npx hardhat --version || npx hardhat",
+    "hh:compile": "npx hardhat compile",
+    "hh:deploy:poatc": "npx hardhat run scripts/hh_deploy.js --network poatc",
+    "hh:verify": "npx hardhat run scripts/simple-verify.js --network poatc",
+    "hh:verify:custom": "npx hardhat run scripts/verify-custom.js --network poatc",
+    "hh:verify:manual": "npx hardhat verify --network poatc",
+    "verify": "node scripts/verify-standalone.js"
+  },
+  "keywords": [
+    "blockchain",
+    "smart-contract",
+    "traceability",
+    "poatc",
+    "solidity"
+  ],
+  "author": "POATC Team",
+  "license": "MIT",
+  "dependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "dotenv": "^16.4.5",
+    "ethers": "^6.8.1",
+    "hardhat": "^2.22.2",
+    "solc": "^0.8.20",
+    "web3": "^4.2.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.1.0",
+    "@nomicfoundation/hardhat-ethers": "^3.1.0",
+    "@nomicfoundation/hardhat-ignition-ethers": "^0.15.14",
+    "@nomicfoundation/hardhat-network-helpers": "^1.1.0",
+    "@nomicfoundation/hardhat-verify": "^3.0.3",
+    "@typechain/ethers-v6": "^0.5.1",
+    "@typechain/hardhat": "^9.1.0",
+    "@types/chai": "^4.3.20",
+    "@types/mocha": "^10.0.10",
+    "chai": "^4.5.0",
+    "hardhat-gas-reporter": "^1.0.10",
+    "solidity-coverage": "^0.8.16",
+    "ts-node": "^10.9.2",
+    "typechain": "^8.3.2",
+    "typescript": "^5.9.3"
+  }
+}

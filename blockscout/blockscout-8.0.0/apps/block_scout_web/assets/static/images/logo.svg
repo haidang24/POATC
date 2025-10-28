@@ -1,0 +1,31 @@
+﻿<svg width="220" height="60" viewBox="0 0 220 60" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="modernGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background vá»›i glass effect -->
+  <rect width="220" height="60" fill="rgba(255,255,255,0.1)" rx="12" stroke="url(#modernGradient)" stroke-width="2"/>
+  
+  <!-- Icon hiá»‡n Ä‘áº¡i -->
+  <circle cx="30" cy="30" r="12" fill="url(#modernGradient)" filter="url(#glow)"/>
+  <path d="M22 30 L26 34 L38 22" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Project Name -->
+  <text x="55" y="35" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="24" font-weight="700" fill="url(#modernGradient)" filter="url(#glow)">POATC</text>
+  
+  <!-- Subtitle -->
+  <text x="55" y="48" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="10" font-weight="500" fill="#64748b" opacity="0.8">Blockchain Explorer</text>
+</svg>
