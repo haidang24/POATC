@@ -1,23 +1,28 @@
-# Proof-of-AI Tracing (POATC)
+<!-- title center -->
+<div align="center">
+<h1 style="font-size: 36px; font-weight: bold;">Proof-of-AI Tracing (POATC) </h1>
+<p style="font-size: 18px; color: #666;">v1.0.0</p>
+</div>
 
 <div align="center">
 
-![POATC Logo](https://img.shields.io/badge/POATC-v1.0.0-blue?style=for-the-badge&logo=ethereum)
-![HD24 Teams](https://img.shields.io/badge/HD24%20Teams-Commercial%20Project-green?style=for-the-badge)
-![License](https://img.shields.io/badge/License-Commercial-red?style=for-the-badge)
+<img src="https://img.shields.io/badge/POATC-v1.0.0-blue?style=for-the-badge&logo=ethereum" alt="POATC Logo">
+<img src="https://img.shields.io/badge/HD24%20Teams-Commercial%20Project-green?style=for-the-badge" alt="HD24 Teams">
+<img src="https://img.shields.io/badge/License-Commercial-red?style=for-the-badge" alt="License">
 
-**Cơ chế đồng thuận nâng cao với tích hợp trí tuệ nhân tạo AI và bảo mật high security**
+
+<p style="font-size: 18px; color: #666;">Cơ chế đồng thuận nâng cao với tích hợp trí tuệ nhân tạo AI và bảo mật high security</p>
 
 
 </div>
 
 
 
-## 🎯 **Tổng Quan Dự Án**
+## **Tổng Quan Dự Án**
 
 **POATC (Proof-of-AI Tracing)** là một dự án blockchain Layer 1 được phát triển bởi **HD24 Teams**, tập trung vào việc xây dựng cơ chế đồng thuận nâng cao với tích hợp trí tuệ nhân tạo AI và các tính năng bảo mật high security.
 
-### 🏆 **Thành Tựu Chính**
+### **Thành Tựu Chính**
 - ✅ **On-chain Reputation System**: Hệ thống đánh giá danh tiếng validator minh bạch với 4 tiêu chí
 - ✅ **AI-Powered Anomaly Detection**: Phát hiện 5 loại bất thường bằng trí tuệ nhân tạo
 - ✅ **Automated Access Control**: Quản lý whitelist/blacklist tự động dựa trên reputation
@@ -26,9 +31,9 @@
 - ✅ **Time Dynamic Adjustment**: Điều chỉnh thời gian động dựa trên network conditions
 
 
-## 🔧 **Tính Năng Nâng Cao**
+## **Tính Năng Nâng Cao**
 
-### 🏅 **1. On-chain Reputation System**
+### **1. On-chain Reputation System**
 ```go
 type ReputationScore struct {
     Address           common.Address
@@ -44,12 +49,12 @@ type ReputationScore struct {
 ```
 
 **Hệ thống đánh giá đa chiều:**
-- 📊 **Block Mining Performance** (40%): Khuyến khích tham gia tích cực
-- ⏰ **Uptime** (30%): Đánh giá độ tin cậy
-- 📈 **Consistency** (20%): Đo lường tính nhất quán
-- ⚠️ **Penalty System** (10%): Xử phạt hành vi vi phạm
+- **Block Mining Performance** (40%): Khuyến khích tham gia tích cực
+- **Uptime** (30%): Đánh giá độ tin cậy
+- **Consistency** (20%): Đo lường tính nhất quán
+- **Penalty System** (10%): Xử phạt hành vi vi phạm
 
-### 🤖 **2. AI-Powered Anomaly Detection**
+### **2. AI-Powered Anomaly Detection**
 ```go
 const (
     AnomalyNone              AnomalyType = iota
@@ -62,12 +67,12 @@ const (
 ```
 
 **Phát hiện thông minh 5 loại anomaly:**
-- 🔍 **Real-time Monitoring**: Giám sát liên tục hành vi validator
-- 🧠 **Pattern Recognition**: Nhận diện các pattern tấn công phức tạp
-- ⚡ **Immediate Response**: Phản ứng ngay lập tức với các vi phạm
-- 📊 **Statistical Analysis**: Phân tích thống kê để phát hiện outliers
+- **Real-time Monitoring**: Giám sát liên tục hành vi validator
+- **Pattern Recognition**: Nhận diện các pattern tấn công phức tạp
+- **Immediate Response**: Phản ứng ngay lập tức với các vi phạm
+- **Statistical Analysis**: Phân tích thống kê để phát hiện outliers
 
-### 🛡️ **3. Automated Access Control**
+### **3. Automated Access Control**
 ```go
 func (c *Clique) manageWhitelistBlacklistByReputation(signer common.Address, blockNumber uint64) {
     score := c.reputationSystem.GetReputationScore(signer)
@@ -85,11 +90,11 @@ func (c *Clique) manageWhitelistBlacklistByReputation(signer common.Address, blo
 ```
 
 **Quản lý tự động:**
-- 🔄 **Auto-blacklist**: Tự động cấm validators có reputation thấp
-- ✅ **Auto-whitelist**: Tự động cho phép validators có reputation cao
-- ⏰ **Expiration Support**: Hỗ trợ hạn sử dụng cho các hạn chế
+- **Auto-blacklist**: Tự động cấm validators có reputation thấp
+- **Auto-whitelist**: Tự động cho phép validators có reputation cao
+- **Expiration Support**: Hỗ trợ hạn sử dụng cho các hạn chế
 
-### 🎯 **4. 2-Tier Validator Selection**
+### **4. 2-Tier Validator Selection**
 ```go
 type ValidatorSelectionConfig struct {
     SmallValidatorSetSize int           // Size của small validator set
@@ -104,12 +109,12 @@ type ValidatorSelectionConfig struct {
 ```
 
 **Hệ thống lựa chọn 2 tầng:**
-- 🎲 **Tier 1**: Chọn small validator set từ tất cả validators
-- 🎯 **Tier 2**: Random selection từ small set
-- 🔄 **4 Phương pháp**: Random, Stake-based, Reputation-based, Hybrid
-- ⚖️ **Fairness**: Đảm bảo tính công bằng và không dự đoán được
+- **Tier 1**: Chọn small validator set từ tất cả validators
+- **Tier 2**: Random selection từ small set
+- **4 Phương pháp**: Random, Stake-based, Reputation-based, Hybrid
+- **Fairness**: Đảm bảo tính công bằng và không dự đoán được
 
-### 🔍 **5. Advanced Transaction Tracing System**
+### **5. Advanced Transaction Tracing System**
 ```go
 const (
     TraceLevelOff TraceLevel = iota
@@ -130,13 +135,13 @@ const (
 ```
 
 **Hệ thống tracing toàn diện:**
-- 📊 **4 Trace Levels**: Off, Basic, Detailed, Verbose
-- 🔗 **13 Trace Event Types**: Bao gồm tất cả hoạt động consensus
-- 🌳 **Merkle Tree Support**: Đảm bảo tính toàn vẹn dữ liệu
-- 🐛 **Debug Support**: Hỗ trợ debug và phân tích chi tiết
-- 📈 **Performance Analysis**: Phân tích hiệu suất real-time
+- **4 Trace Levels**: Off, Basic, Detailed, Verbose
+- **13 Trace Event Types**: Bao gồm tất cả hoạt động consensus
+- **Merkle Tree Support**: Đảm bảo tính toàn vẹn dữ liệu
+- **Debug Support**: Hỗ trợ debug và phân tích chi tiết
+- **Performance Analysis**: Phân tích hiệu suất real-time
 
-### ⏰ **6. Time Dynamic Adjustment**
+### **6. Time Dynamic Adjustment**
 ```go
 type TimeDynamicConfig struct {
     // Dynamic Block Time
@@ -156,14 +161,14 @@ type TimeDynamicConfig struct {
 ```
 
 **Điều chỉnh thời gian động:**
-- 🕐 **Adaptive Block Time**: 5-30 giây tùy theo network load
-- 🔄 **Dynamic Validator Selection**: Thay đổi interval dựa trên performance
-- 📉 **Reputation Decay**: Decay rate động theo thời gian
-- 📊 **Real-time Monitoring**: Giám sát và điều chỉnh liên tục
+- **Adaptive Block Time**: 5-30 giây tùy theo network load
+- **Dynamic Validator Selection**: Thay đổi interval dựa trên performance
+- **Reputation Decay**: Decay rate động theo thời gian
+- **Real-time Monitoring**: Giám sát và điều chỉnh liên tục
 
 ---
 
-## 🏗️ **Kiến Trúc Hệ Thống**
+## **Kiến Trúc Hệ Thống**
 
 ```mermaid
 graph TB
@@ -180,7 +185,7 @@ graph TB
     K[Automated Manager] --> F
 ```
 
-### 🔄 **Luồng Xử Lý Block**
+### **Luồng Xử Lý Block**
 1. **Block Creation**: Validator tạo block mới
 2. **Anomaly Detection**: AI phát hiện hành vi bất thường (5 loại)
 3. **Reputation Update**: Cập nhật điểm danh tiếng (4 tiêu chí)
@@ -193,19 +198,19 @@ graph TB
 
 ---
 
-## 🚀 **Cài Đặt và Triển Khai**
+## **Cài Đặt và Triển Khai**
 
-### 📋 **Yêu Cầu Hệ Thống**
+### **Yêu Cầu Hệ Thống**
 - **Go**: 1.19+ 
 - **RAM**: 8GB+ (khuyến nghị 16GB)
 - **Storage**: 100GB+ SSD
 - **Network**: 25+ Mbps
 
-### 🔧 **Cài Đặt Nhanh**
+### **Cài Đặt Nhanh**
 ```bash
 # Clone repository
-git clone https://github.com/haidang24/poatc.git
-cd poatc
+git clone https://github.com/haidang24/POATC.git
+cd POATC
 
 # Build executable
 go build -o hdchain.exe ./cmd/geth
@@ -219,18 +224,18 @@ cp ../testnet/genesis.json .
 ./hdchain.exe --datadir node2 --port 30304 --rpc --rpcport 8549 --mine --consensus poatc
 ```
 
-### 🌐 **Khởi Động Explorer**
+### **Khởi Động Explorer**
 ```bash
 cd testnet/explorer
-python serve.py 8080
+python server.py 8080
 # Mở: http://localhost:8080
 ```
 
 ---
 
-## 📊 **Hiệu Suất và Bảo Mật**
+## **Hiệu Suất và Bảo Mật**
 
-### ⚡ **Performance Metrics**
+### **Performance Metrics**
 | Metric | Value | Improvement |
 |--------|-------|-------------|
 | Block Time | 5-30 seconds | Dynamic adjustment |
@@ -242,81 +247,81 @@ python serve.py 8080
 | Trace Processing | <200ms | Merkle tree calculation |
 | Validator Selection | <150ms | 2-tier algorithm |
 
-### 🔒 **Security Features**
-- 🛡️ **Multi-layer Security**: Anomaly detection + Reputation + Access control + Tracing
-- 🔐 **Tamper-resistant**: On-chain storage với cryptographic verification
-- 🚨 **Real-time Monitoring**: Continuous monitoring với immediate response
-- 🔄 **Automated Recovery**: Self-healing mechanisms
-- 🌳 **Merkle Tree Integrity**: Đảm bảo tính toàn vẹn trace data
-- 🎯 **2-Tier Validation**: Double validation cho validator selection
-- ⏰ **Dynamic Security**: Adaptive security parameters
+### **Security Features**
+- **Multi-layer Security**: Anomaly detection + Reputation + Access control + Tracing
+- **Tamper-resistant**: On-chain storage với cryptographic verification
+- **Real-time Monitoring**: Continuous monitoring với immediate response
+- **Automated Recovery**: Self-healing mechanisms
+- **Merkle Tree Integrity**: Đảm bảo tính toàn vẹn trace data
+- **2-Tier Validation**: Double validation cho validator selection
+- **Dynamic Security**: Adaptive security parameters
 
 ---
 
-## 🎯 **Ứng Dụng Thực Tế**
+## **Ứng Dụng Thực Tế**
 
-### 🏢 **Enterprise Blockchain**
+### **Enterprise Blockchain**
 - **Consortium Networks**: Phù hợp cho các mạng liên minh
 - **Supply Chain**: Theo dõi và xác thực chuỗi cung ứng
 - **Financial Services**: Ứng dụng tài chính với bảo mật cao
 
-### 🌐 **Public Networks**
+### **Public Networks**
 - **DeFi Platforms**: Nền tảng tài chính phi tập trung
 - **NFT Marketplaces**: Thị trường NFT với tính công bằng cao
 - **Gaming Platforms**: Nền tảng game với anti-cheat mechanisms
 
 ---
 
-## 📈 **Roadmap**
+## **Roadmap**
 
-### 🎯 **Q1 2025**
-- ✅ Random Selection Algorithm
-- ✅ On-chain Reputation System (4 tiêu chí)
-- ✅ AI Anomaly Detection (5 loại)
-- ✅ 2-Tier Validator Selection (4 phương pháp)
-- ✅ Advanced Transaction Tracing (4 levels)
-- ✅ Time Dynamic Adjustment (5-30s)
-- ✅ Professional Explorer
+### **Q1 2025**
+- **Random Selection Algorithm**
+- **On-chain Reputation System** (4 tiêu chí)
+- **AI Anomaly Detection** (5 loại)
+- **2-Tier Validator Selection** (4 phương pháp)
+- **Advanced Transaction Tracing** (4 levels)
+- **Time Dynamic Adjustment** (5-30s)
+- **Professional Explorer**
 
-### 🚀 **Q2 2025**
-- 🔄 Machine Learning Enhancement cho Anomaly Detection
-- 🔄 Cross-chain Integration
-- 🔄 Advanced Analytics Dashboard
-- 🔄 Mobile App Development
-- 🔄 Merkle Tree Optimization
+### **Q2 2025**
+- **Machine Learning Enhancement cho Anomaly Detection**
+- **Cross-chain Integration**
+- **Advanced Analytics Dashboard**
+- **Mobile App Development**
+- **Merkle Tree Optimization**
 
-### 🌟 **Q3-Q4 2025**
-- 📋 Enterprise Solutions
-- 📋 API Marketplace
-- 📋 Community Governance
-- 📋 Global Expansion
-- 📋 Advanced AI Features
-
----
-
-### 🌐 **Community**
-- 💬 **Discord**: [HaiDang Community](https://discord.gg/haidang)
-- 📧 **Email**: maidang24112004@gmail.com
+### **Q3-Q4 2025**
+- **Enterprise Solutions**
+- **API Marketplace**
+- **Community Governance**
+- **Global Expansion**
+- **Advanced AI Features**
 
 ---
 
-## 🏆 **Đội Ngũ Phát Triển**
+### **Community**
+- **Discord**: [HaiDang Community](https://discord.gg/haidang)
+- **Email**: maidang24112004@gmail.com
 
-### 👥 **HD24 Teams**
+---
+
+## **Đội Ngũ Phát Triển**
+
+### **HD24 Teams**
 - **Developer**: HaiDang - Blockchain Developer
 
 ---
 
-## 📞 **Liên Hệ**
+## **Liên Hệ**
 
 <div align="center">
 
 **HaiDang - Blockchain Developer**
 
-📧 **Email**: maidang24112004@gmail.com  
+**Email**: maidang24112004@gmail.com  
 
 ---
 
-*©2025 HD24 Teams - Haidang24*
+*Copyright HD24Teams - HD24Security Lab - POATC Consensus Engine*
 
 </div>
