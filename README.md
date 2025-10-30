@@ -1,4 +1,3 @@
-<img width="954" height="1349" alt="image" src="https://github.com/user-attachments/assets/fdec3120-eb6d-4503-8d5c-0d8818a11cd6" /><!-- title center -->
 <div align="center">
 <h1 style="font-size: 36px; font-weight: bold;">Proof of Auditable & Trustworthy Conduct (POATC) </h1>
 <p style="font-size: 18px; color: #666;">v1.0.0</p>
