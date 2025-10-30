@@ -1,6 +1,6 @@
-<!-- title center -->
+<img width="954" height="1349" alt="image" src="https://github.com/user-attachments/assets/fdec3120-eb6d-4503-8d5c-0d8818a11cd6" /><!-- title center -->
 <div align="center">
-<h1 style="font-size: 36px; font-weight: bold;">Proof-of-AI Tracing (POATC) </h1>
+<h1 style="font-size: 36px; font-weight: bold;">Proof of Auditable & Trustworthy Conduct (POATC) </h1>
 <p style="font-size: 18px; color: #666;">v1.0.0</p>
 </div>
 
@@ -20,7 +20,7 @@
 
 ## **Tổng Quan Dự Án**
 
-**POATC (Proof-of-AI Tracing)** là một dự án blockchain Layer 1 được phát triển bởi **HD24 Teams**, tập trung vào việc xây dựng cơ chế đồng thuận nâng cao với tích hợp trí tuệ nhân tạo AI và các tính năng bảo mật high security.
+**POATC (Proof of Auditable & Trustworthy Conduct)** là một dự án blockchain Layer 1 được phát triển bởi **HD24 Teams**, tập trung vào việc xây dựng cơ chế đồng thuận nâng cao với tích hợp trí tuệ nhân tạo AI và các tính năng bảo mật high security.
 
 ### **Thành Tựu Chính**
 - ✅ **On-chain Reputation System**: Hệ thống đánh giá danh tiếng validator minh bạch với 4 tiêu chí
